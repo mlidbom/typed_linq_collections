@@ -37,24 +37,20 @@ if TYPE_CHECKING:
     from typed_linq_collections.q_grouping import QGrouping
     from typed_linq_collections.q_ordered_iterable import QOrderedIterable
 
-def query[TItem](*sources: Iterable[TItem]) -> QIterable[TItem]:
-    """Creates a QIterable from one or more iterables for LINQ-style operations.
+def query[TItem](value: Iterable[TItem]) -> QIterable[TItem]:
+    """Creates a QIterable from any iterable for LINQ-style operations.
 
     This is the main entry point for the typed-linq-collections library. It wraps
     any iterable (list, tuple, set, generator, etc.) in a QIterable that provides
     a rich set of LINQ-style operations for querying and transforming data.
-
-    When multiple sources are provided, they are concatenated in order. This is useful
-    for combining iterables of different subtypes into a common base type.
 
     The resulting QIterable is lazy. Operations are chained together
     and only executed when the result is materialized (e.g., via to_list(), any(),
     count(), etc.).
 
     Args:
-        *sources: One or more iterable objects (list, tuple, set, generator, range, etc.)
-                  to wrap in a QIterable for LINQ-style operations. Multiple sources
-                  are concatenated in order.
+        value: Any iterable object (list, tuple, set, generator, range, etc.)
+               to wrap in a QIterable for LINQ-style operations.
 
     Returns:
         A QIterable[TItem] that provides LINQ-style methods for querying and
@@ -73,14 +69,33 @@ def query[TItem](*sources: Iterable[TItem]) -> QIterable[TItem]:
         >>> people = [("Alice", 25), ("Bob", 30), ("Charlie", 35)]
         >>> query(people).where(lambda p: p[1] >= 30).select(lambda p: p[0]).to_list()
         ['Bob', 'Charlie']
+    """
+    return C.caching_iterable(value)
 
-        >>> # Combining multiple sources
-        >>> dogs: list[Dog] = [...]
-        >>> cats: list[Cat] = [...]
-        >>> all_animals: QIterable[Animal] = query(dogs, cats)
+
+def query_from[TItem](*sources: Iterable[TItem]) -> QIterable[TItem]:
+    """Creates a QIterable by combining multiple iterables.
+
+    This function is useful for combining collections of different subtypes into
+    a common base type. Elements from all sources are concatenated in order.
+
+    Args:
+        *sources: One or more iterable objects to combine.
+
+    Returns:
+        A QIterable[TItem] containing all elements from all sources.
+
+    Examples:
+        >>> query_from([1, 2], [3, 4], [5, 6]).to_list()
+        [1, 2, 3, 4, 5, 6]
+
+        >>> # Combining subtypes into base type
+        >>> dogs: QSet[Dog] = QSet([...])
+        >>> cats: QSet[Cat] = QSet([...])
+        >>> all_animals: QIterable[Animal] = query_from(dogs, cats)
     """
     if not sources:
-        raise ValueError("query() requires at least one source iterable")
+        return C.caching_iterable(())  # type: ignore
     if len(sources) == 1:
         return C.caching_iterable(sources[0])
     return C.caching_iterable(chain(*sources))

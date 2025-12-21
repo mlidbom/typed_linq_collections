@@ -24,34 +24,52 @@ class QSet[TItem](set[TItem], QIterable[TItem]):
     """
     __slots__: tuple[str, ...] = ()
 
-    def __init__(self, *sources: Iterable[TItem]) -> None:
-        """Initializes a new QSet with unique elements from one or more iterables.
+    def __init__(self, iterable: Iterable[TItem] = ()) -> None:
+        """Initializes a new QSet with unique elements from the given iterable.
 
-        Duplicate elements in the input iterables are automatically removed, maintaining
-        only unique values as per standard set behavior. When multiple sources are provided,
-        they are concatenated in order before uniqueness is applied.
+        Duplicate elements in the input iterable are automatically removed, maintaining
+        only unique values as per standard set behavior.
 
         Args:
-            *sources: One or more iterables of elements to initialize the set with.
-                      Duplicates will be automatically removed.
-                      Defaults to an empty sequence when no arguments provided.
+            iterable: An iterable of elements to initialize the set with.
+                     Duplicates will be automatically removed.
+                     Defaults to an empty sequence.
 
         Examples:
             >>> QSet([1, 2, 3])
             {1, 2, 3}
-            >>> QSet([1, 2], [2, 3], [3, 4])
+            >>> QSet([1, 2, 2])
+            {1, 2}
+        """
+        super().__init__(iterable)
+
+    @staticmethod
+    def from_[T](*sources: Iterable[T]) -> QSet[T]:
+        """Creates a new QSet by combining elements from multiple iterables.
+
+        This method is useful for combining collections of different subtypes into
+        a common base type. Elements from all sources are combined and deduplicated.
+
+        Args:
+            *sources: One or more iterables of elements to combine.
+                     Duplicates across all sources will be removed.
+
+        Returns:
+            A new QSet containing unique elements from all sources.
+
+        Examples:
+            >>> QSet.from_([1, 2], [2, 3], [3, 4])
             {1, 2, 3, 4}
             >>> # Combining subtypes into base type
-            >>> dogs: QSet[Dog] = ...
-            >>> cats: QSet[Cat] = ...
-            >>> all_animals: QSet[Animal] = QSet(dogs, cats)
+            >>> dogs: QSet[Dog] = QSet([...])
+            >>> cats: QSet[Cat] = QSet([...])
+            >>> all_animals: QSet[Animal] = QSet.from_(dogs, cats)
         """
         if not sources:
-            super().__init__()
-        elif len(sources) == 1:
-            super().__init__(sources[0])
-        else:
-            super().__init__(chain(*sources))
+            return QSet()
+        if len(sources) == 1:
+            return QSet(sources[0])
+        return QSet(chain(*sources))
 
     @override
     def _optimized_length(self) -> int: return len(self)

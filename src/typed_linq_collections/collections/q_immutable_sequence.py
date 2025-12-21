@@ -38,34 +38,49 @@ class QImmutableSequence[TItem](ImmutableSequence[TItem], QSequence[TItem]):
     """
     __slots__: tuple[str, ...] = ()
 
-    def __init__(self, *sources: Iterable[TItem]) -> None:
-        """Initializes a new QImmutableSequence with elements from one or more iterables.
+    def __init__(self, iterable: Iterable[TItem] = ()) -> None:
+        """Initializes a new QImmutableSequence with elements from the given iterable.
 
         The sequence is created once and cannot be modified afterward. All elements
-        from the iterables are copied into the internal storage, preserving their order.
-        When multiple sources are provided, they are concatenated in order.
+        from the iterable are copied into the internal storage, preserving their order.
 
         Args:
-            *sources: One or more iterables of elements to initialize the sequence with.
-                      Elements will be stored in the order they appear.
-                      Defaults to an empty sequence when no arguments provided.
+            iterable: An iterable of elements to initialize the sequence with.
+                     Elements will be stored in the order they appear in the iterable.
+                     Defaults to an empty sequence.
 
         Examples:
             >>> QImmutableSequence([1, 2, 3])
             [1, 2, 3]
-            >>> QImmutableSequence([1, 2], [3, 4], [5, 6])
+        """
+        super().__init__(list(iterable))
+
+    @staticmethod
+    def from_[T](*sources: Iterable[T]) -> QImmutableSequence[T]:
+        """Creates a new QImmutableSequence by concatenating elements from multiple iterables.
+
+        This method is useful for combining collections of different subtypes into
+        a common base type. Elements from all sources are concatenated in order.
+
+        Args:
+            *sources: One or more iterables of elements to concatenate.
+
+        Returns:
+            A new QImmutableSequence containing all elements from all sources in order.
+
+        Examples:
+            >>> QImmutableSequence.from_([1, 2], [3, 4], [5, 6])
             [1, 2, 3, 4, 5, 6]
             >>> # Combining subtypes into base type
-            >>> dogs: QImmutableSequence[Dog] = ...
-            >>> cats: QImmutableSequence[Cat] = ...
-            >>> all_animals: QImmutableSequence[Animal] = QImmutableSequence(dogs, cats)
+            >>> dogs = QImmutableSequence([...])
+            >>> cats = QImmutableSequence([...])
+            >>> all_animals: QImmutableSequence[Animal] = QImmutableSequence.from_(dogs, cats)
         """
         if not sources:
-            super().__init__([])
-        elif len(sources) == 1:
-            super().__init__(list(sources[0]))
-        else:
-            super().__init__(list(chain(*sources)))
+            return QImmutableSequence()
+        if len(sources) == 1:
+            return QImmutableSequence(sources[0])
+        return QImmutableSequence(chain(*sources))
 
     @overload
     def __getitem__(self, index: int) -> TItem: ...

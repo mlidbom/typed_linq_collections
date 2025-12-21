@@ -30,36 +30,53 @@ class QFrozenSet[TItem](frozenset[TItem], QIterable[TItem]):
     """
     __slots__: tuple[str, ...] = ()
 
-    def __new__(cls, *sources: Iterable[TItem]) -> QFrozenSet[TItem]:
-        """Creates a new QFrozenSet with unique elements from one or more iterables.
+    def __new__(cls, iterable: Iterable[TItem] = ()) -> QFrozenSet[TItem]:
+        """Creates a new QFrozenSet with unique elements from the given iterable.
 
-        Duplicate elements in the input iterables are automatically removed, maintaining
-        only unique values as per standard frozenset behavior. When multiple sources are
-        provided, they are concatenated in order before uniqueness is applied.
+        Duplicate elements in the input iterable are automatically removed, maintaining
+        only unique values as per standard frozenset behavior.
 
         Args:
-            *sources: One or more iterables of elements to initialize the frozenset with.
-                      Duplicates will be automatically removed.
-                      Defaults to an empty sequence when no arguments provided.
+            iterable: An iterable of elements to initialize the frozenset with.
+                     Duplicates will be automatically removed.
+                     Defaults to an empty sequence.
 
         Returns:
-            A new QFrozenSet instance containing the unique elements from the iterables.
+            A new QFrozenSet instance containing the unique elements from the iterable.
 
         Examples:
             >>> QFrozenSet([1, 2, 3])
             frozenset({1, 2, 3})
-            >>> QFrozenSet([1, 2], [2, 3], [3, 4])
+        """
+        return super().__new__(cls, iterable)
+
+    @staticmethod
+    def from_[T](*sources: Iterable[T]) -> QFrozenSet[T]:
+        """Creates a new QFrozenSet by combining elements from multiple iterables.
+
+        This method is useful for combining collections of different subtypes into
+        a common base type. Elements from all sources are combined and deduplicated.
+
+        Args:
+            *sources: One or more iterables of elements to combine.
+                     Duplicates across all sources will be removed.
+
+        Returns:
+            A new QFrozenSet containing unique elements from all sources.
+
+        Examples:
+            >>> QFrozenSet.from_([1, 2], [2, 3], [3, 4])
             frozenset({1, 2, 3, 4})
             >>> # Combining subtypes into base type
-            >>> dogs: QFrozenSet[Dog] = ...
-            >>> cats: QFrozenSet[Cat] = ...
-            >>> all_animals: QFrozenSet[Animal] = QFrozenSet(dogs, cats)
+            >>> dogs: QFrozenSet[Dog] = QFrozenSet([...])
+            >>> cats: QFrozenSet[Cat] = QFrozenSet([...])
+            >>> all_animals: QFrozenSet[Animal] = QFrozenSet.from_(dogs, cats)
         """
         if not sources:
-            return super().__new__(cls)
+            return QFrozenSet()
         if len(sources) == 1:
-            return super().__new__(cls, sources[0])
-        return super().__new__(cls, chain(*sources))
+            return QFrozenSet(sources[0])
+        return QFrozenSet(chain(*sources))
 
     @override
     def _optimized_length(self) -> int: return len(self)

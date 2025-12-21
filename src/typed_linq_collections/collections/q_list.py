@@ -26,31 +26,45 @@ class QList[TItem](list[TItem], QSequence[TItem], QIterable[TItem]):
     """
     __slots__: tuple[str, ...] = ()
 
-    def __init__(self, *sources: Iterable[TItem]) -> None:
-        """Initializes a new QList with elements from one or more iterables.
-
-        When multiple sources are provided, they are concatenated in order.
+    def __init__(self, iterable: Iterable[TItem] = ()) -> None:
+        """Initializes a new QList with elements from the given iterable.
 
         Args:
-            *sources: One or more iterables of elements to initialize the list with.
-                      Defaults to an empty sequence when no arguments provided.
+            iterable: An iterable of elements to initialize the list with.
+                     Defaults to an empty sequence.
 
         Examples:
             >>> QList([1, 2, 3])
             [1, 2, 3]
-            >>> QList([1, 2], [3, 4], [5, 6])
+        """
+        super().__init__(iterable)
+
+    @staticmethod
+    def from_[T](*sources: Iterable[T]) -> QList[T]:
+        """Creates a new QList by concatenating elements from multiple iterables.
+
+        This method is useful for combining collections of different subtypes into
+        a common base type. Elements from all sources are concatenated in order.
+
+        Args:
+            *sources: One or more iterables of elements to concatenate.
+
+        Returns:
+            A new QList containing all elements from all sources in order.
+
+        Examples:
+            >>> QList.from_([1, 2], [3, 4], [5, 6])
             [1, 2, 3, 4, 5, 6]
             >>> # Combining subtypes into base type
-            >>> dogs: QList[Dog] = ...
-            >>> cats: QList[Cat] = ...
-            >>> all_animals: QList[Animal] = QList(dogs, cats)
+            >>> dogs: QList[Dog] = QList([...])
+            >>> cats: QList[Cat] = QList([...])
+            >>> all_animals: QList[Animal] = QList.from_(dogs, cats)
         """
         if not sources:
-            super().__init__()
-        elif len(sources) == 1:
-            super().__init__(sources[0])
-        else:
-            super().__init__(chain(*sources))
+            return QList()
+        if len(sources) == 1:
+            return QList(sources[0])
+        return QList(chain(*sources))
 
     @override
     def _optimized_length(self) -> int: return len(self)

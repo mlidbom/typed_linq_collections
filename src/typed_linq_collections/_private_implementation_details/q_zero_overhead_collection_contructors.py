@@ -29,32 +29,32 @@ if TYPE_CHECKING:
 class ZeroImportOverheadConstructors:
     """This class contains static methods that are used to construct the collection classes with zero import overhead and without the need to complicate methods thoughouht the library by having to import these classes within functions in order to avoid circular imports."""
     @staticmethod
-    def list[TItem](*iterable: Iterable[TItem]) -> QList[TItem]:
+    def list[TItem](iterable: Iterable[TItem]) -> QList[TItem]:
         from typed_linq_collections.collections.q_list import QList
 
         ZeroImportOverheadConstructors.list = QList  # replace this method with a direct call so that future calls have zero import overhead
-        return ZeroImportOverheadConstructors.list(*iterable)  # use the new version to prove from the very first call that it works
+        return ZeroImportOverheadConstructors.list(iterable)  # use the new version to prove from the very first call that it works
 
     @staticmethod
-    def sequence[TItem](*iterable: Iterable[TItem]) -> QSequence[TItem]:
+    def sequence[TItem](iterable: Iterable[TItem]) -> QSequence[TItem]:
         from typed_linq_collections.collections.q_immutable_sequence import QImmutableSequence
 
         ZeroImportOverheadConstructors.sequence = QImmutableSequence  # replace this method with a direct call so that future calls have zero import overhead
-        return ZeroImportOverheadConstructors.sequence(*iterable)  # use the new version to prove from the very first call that it works
+        return ZeroImportOverheadConstructors.sequence(iterable)  # use the new version to prove from the very first call that it works
 
     @staticmethod
-    def set[TItem](*iterable: Iterable[TItem]) -> QSet[TItem]:
+    def set[TItem](iterable: Iterable[TItem]) -> QSet[TItem]:
         from typed_linq_collections.collections.q_set import QSet
 
         ZeroImportOverheadConstructors.set = QSet  # replace this method with a direct call so that future calls have zero import overhead
-        return ZeroImportOverheadConstructors.set(*iterable)  # use the new version to prove from the very first call that it works
+        return ZeroImportOverheadConstructors.set(iterable)  # use the new version to prove from the very first call that it works
 
     @staticmethod
-    def frozen_set[TItem](*iterable: Iterable[TItem]) -> QFrozenSet[TItem]:
+    def frozen_set[TItem](iterable: Iterable[TItem]) -> QFrozenSet[TItem]:
         from typed_linq_collections.collections.q_frozen_set import QFrozenSet
 
         ZeroImportOverheadConstructors.frozen_set = QFrozenSet  # replace this method with a direct call so that future calls have zero import overhead
-        return ZeroImportOverheadConstructors.frozen_set(*iterable)  # use the new version to prove from the very first call that it works
+        return ZeroImportOverheadConstructors.frozen_set(iterable)  # use the new version to prove from the very first call that it works
 
     @staticmethod
     def cast[TItem](qiterable: QIterable[TItem]) -> QCast[TItem]:
