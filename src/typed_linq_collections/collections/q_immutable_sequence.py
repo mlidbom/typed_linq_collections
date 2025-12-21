@@ -56,7 +56,7 @@ class QImmutableSequence[TItem](ImmutableSequence[TItem], QSequence[TItem]):
         super().__init__(list(iterable))
 
     @staticmethod
-    def from_[T](*sources: Iterable[T]) -> QImmutableSequence[T]:
+    def create[T](*sources: Iterable[T]) -> QImmutableSequence[T]:
         """Creates a new QImmutableSequence by concatenating elements from multiple iterables.
 
         This method is useful for combining collections of different subtypes into
@@ -69,12 +69,12 @@ class QImmutableSequence[TItem](ImmutableSequence[TItem], QSequence[TItem]):
             A new QImmutableSequence containing all elements from all sources in order.
 
         Examples:
-            >>> QImmutableSequence.from_([1, 2], [3, 4], [5, 6])
+            >>> QImmutableSequence.create([1, 2], [3, 4], [5, 6])
             [1, 2, 3, 4, 5, 6]
             >>> # Combining subtypes into base type
             >>> dogs = QImmutableSequence([...])
             >>> cats = QImmutableSequence([...])
-            >>> all_animals: QImmutableSequence[Animal] = QImmutableSequence.from_(dogs, cats)
+            >>> all_animals: QImmutableSequence[Animal] = QImmutableSequence.create(dogs, cats)
         """
         if not sources:
             return QImmutableSequence()

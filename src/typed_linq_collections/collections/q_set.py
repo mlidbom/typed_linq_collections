@@ -44,7 +44,7 @@ class QSet[TItem](set[TItem], QIterable[TItem]):
         super().__init__(iterable)
 
     @staticmethod
-    def from_[T](*sources: Iterable[T]) -> QSet[T]:
+    def create[T](*sources: Iterable[T]) -> QSet[T]:
         """Creates a new QSet by combining elements from multiple iterables.
 
         This method is useful for combining collections of different subtypes into
@@ -58,12 +58,12 @@ class QSet[TItem](set[TItem], QIterable[TItem]):
             A new QSet containing unique elements from all sources.
 
         Examples:
-            >>> QSet.from_([1, 2], [2, 3], [3, 4])
+            >>> QSet.create([1, 2], [2, 3], [3, 4])
             {1, 2, 3, 4}
             >>> # Combining subtypes into base type
             >>> dogs: QSet[Dog] = QSet([...])
             >>> cats: QSet[Cat] = QSet([...])
-            >>> all_animals: QSet[Animal] = QSet.from_(dogs, cats)
+            >>> all_animals: QSet[Animal] = QSet.create(dogs, cats)
         """
         if not sources:
             return QSet()

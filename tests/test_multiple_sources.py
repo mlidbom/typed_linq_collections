@@ -30,25 +30,25 @@ class Cat(Animal):
 
 # QSet tests
 def test_q_set_from_multiple_sources() -> None:
-    result: QSet[int] = QSet.from_([1, 2], [3, 4], [5, 6])
+    result: QSet[int] = QSet.create([1, 2], [3, 4], [5, 6])
     assert len(result) == 6
     assert set(result) == {1, 2, 3, 4, 5, 6}
 
 
 def test_q_set_from_multiple_sources_with_duplicates() -> None:
-    result: QSet[int] = QSet.from_([1, 2], [2, 3], [3, 4])
+    result: QSet[int] = QSet.create([1, 2], [2, 3], [3, 4])
     assert len(result) == 4
     assert set(result) == {1, 2, 3, 4}
 
 
 def test_q_set_from_single_source() -> None:
-    result: QSet[int] = QSet.from_([1, 2, 3])
+    result: QSet[int] = QSet.create([1, 2, 3])
     assert len(result) == 3
     assert set(result) == {1, 2, 3}
 
 
 def test_q_set_from_empty() -> None:
-    result: QSet[int] = QSet.from_()
+    result: QSet[int] = QSet.create()
     assert len(result) == 0
 
 
@@ -57,7 +57,7 @@ def test_q_set_from_with_heterogeneous_subtypes() -> None:
     cats: QSet[Cat] = QSet([Cat("Whiskers"), Cat("Mittens")])
 
     # Combine into base type
-    all_animals: QSet[Animal] = QSet.from_(dogs, cats)
+    all_animals: QSet[Animal] = QSet.create(dogs, cats)
 
     assert len(all_animals) == 4
     names = {animal.name for animal in all_animals}
@@ -74,32 +74,32 @@ def test_q_set_constructor_does_not_iterate_strings() -> None:
 
 # QList tests
 def test_q_list_from_multiple_sources() -> None:
-    result: QList[int] = QList.from_([1, 2], [3, 4], [5, 6])
+    result: QList[int] = QList.create([1, 2], [3, 4], [5, 6])
     assert len(result) == 6
     assert result.to_list() == [1, 2, 3, 4, 5, 6]
 
 
 def test_q_list_from_multiple_sources_preserves_order() -> None:
-    result: QList[int] = QList.from_([1, 2], [3, 4], [5, 6])
+    result: QList[int] = QList.create([1, 2], [3, 4], [5, 6])
     assert result[0] == 1
     assert result[3] == 4
     assert result[5] == 6
 
 
 def test_q_list_from_multiple_sources_preserves_duplicates() -> None:
-    result: QList[int] = QList.from_([1, 2], [2, 3], [3, 4])
+    result: QList[int] = QList.create([1, 2], [2, 3], [3, 4])
     assert len(result) == 6
     assert result.to_list() == [1, 2, 2, 3, 3, 4]
 
 
 def test_q_list_from_single_source() -> None:
-    result: QList[int] = QList.from_([1, 2, 3])
+    result: QList[int] = QList.create([1, 2, 3])
     assert len(result) == 3
     assert result.to_list() == [1, 2, 3]
 
 
 def test_q_list_from_empty() -> None:
-    result: QList[int] = QList.from_()
+    result: QList[int] = QList.create()
     assert len(result) == 0
 
 
@@ -109,7 +109,7 @@ def test_q_list_from_with_heterogeneous_subtypes() -> None:
     more_dogs: QList[Dog] = QList([Dog("Rex")])
 
     # Combine into base type
-    all_animals: QList[Animal] = QList.from_(dogs, cats, more_dogs)
+    all_animals: QList[Animal] = QList.create(dogs, cats, more_dogs)
 
     assert len(all_animals) == 5
     assert all_animals[0].name == "Buddy"
@@ -125,25 +125,25 @@ def test_q_list_constructor_does_not_iterate_strings() -> None:
 
 # QFrozenSet tests
 def test_q_frozen_set_from_multiple_sources() -> None:
-    result: QFrozenSet[int] = QFrozenSet.from_([1, 2], [3, 4], [5, 6])
+    result: QFrozenSet[int] = QFrozenSet.create([1, 2], [3, 4], [5, 6])
     assert len(result) == 6
     assert set(result) == {1, 2, 3, 4, 5, 6}
 
 
 def test_q_frozen_set_from_multiple_sources_with_duplicates() -> None:
-    result: QFrozenSet[int] = QFrozenSet.from_([1, 2], [2, 3], [3, 4])
+    result: QFrozenSet[int] = QFrozenSet.create([1, 2], [2, 3], [3, 4])
     assert len(result) == 4
     assert set(result) == {1, 2, 3, 4}
 
 
 def test_q_frozen_set_from_single_source() -> None:
-    result: QFrozenSet[int] = QFrozenSet.from_([1, 2, 3])
+    result: QFrozenSet[int] = QFrozenSet.create([1, 2, 3])
     assert len(result) == 3
     assert set(result) == {1, 2, 3}
 
 
 def test_q_frozen_set_from_empty() -> None:
-    result: QFrozenSet[int] = QFrozenSet.from_()
+    result: QFrozenSet[int] = QFrozenSet.create()
     assert len(result) == 0
 
 
@@ -152,7 +152,7 @@ def test_q_frozen_set_from_with_heterogeneous_subtypes() -> None:
     cats: QFrozenSet[Cat] = QFrozenSet([Cat("Whiskers"), Cat("Mittens")])
 
     # Combine into base type
-    all_animals: QFrozenSet[Animal] = QFrozenSet.from_(dogs, cats)
+    all_animals: QFrozenSet[Animal] = QFrozenSet.create(dogs, cats)
 
     assert len(all_animals) == 4
     names = {animal.name for animal in all_animals}
@@ -161,26 +161,26 @@ def test_q_frozen_set_from_with_heterogeneous_subtypes() -> None:
 
 # QImmutableSequence tests
 def test_q_immutable_sequence_from_multiple_sources() -> None:
-    result: QImmutableSequence[int] = QImmutableSequence.from_([1, 2], [3, 4], [5, 6])
+    result: QImmutableSequence[int] = QImmutableSequence.create([1, 2], [3, 4], [5, 6])
     assert len(result) == 6
     assert list(result) == [1, 2, 3, 4, 5, 6]
 
 
 def test_q_immutable_sequence_from_multiple_sources_preserves_order() -> None:
-    result: QImmutableSequence[int] = QImmutableSequence.from_([1, 2], [3, 4], [5, 6])
+    result: QImmutableSequence[int] = QImmutableSequence.create([1, 2], [3, 4], [5, 6])
     assert result[0] == 1
     assert result[3] == 4
     assert result[5] == 6
 
 
 def test_q_immutable_sequence_from_single_source() -> None:
-    result: QImmutableSequence[int] = QImmutableSequence.from_([1, 2, 3])
+    result: QImmutableSequence[int] = QImmutableSequence.create([1, 2, 3])
     assert len(result) == 3
     assert list(result) == [1, 2, 3]
 
 
 def test_q_immutable_sequence_from_empty() -> None:
-    result: QImmutableSequence[int] = QImmutableSequence.from_()
+    result: QImmutableSequence[int] = QImmutableSequence.create()
     assert len(result) == 0
 
 
@@ -189,7 +189,7 @@ def test_q_immutable_sequence_from_with_heterogeneous_subtypes() -> None:
     cats: QImmutableSequence[Cat] = QImmutableSequence([Cat("Whiskers"), Cat("Mittens")])
 
     # Combine into base type
-    all_animals: QImmutableSequence[Animal] = QImmutableSequence.from_(dogs, cats)
+    all_animals: QImmutableSequence[Animal] = QImmutableSequence.create(dogs, cats)
 
     assert len(all_animals) == 4
     assert all_animals[0].name == "Buddy"
@@ -244,21 +244,21 @@ def test_query_constructor_does_not_iterate_strings() -> None:
 
 # Mixed collection types
 def test_mixed_collection_types_in_q_list_from() -> None:
-    # QList.from_() can accept different collection types
+    # QList.create() can accept different collection types
     set_data = {1, 2, 3}
     list_data = [4, 5, 6]
     tuple_data = (7, 8, 9)
 
-    result: QList[int] = QList.from_(set_data, list_data, tuple_data)
+    result: QList[int] = QList.create(set_data, list_data, tuple_data)
     assert len(result) == 9
 
 
 def test_mixed_collection_types_in_q_set_from() -> None:
-    # QSet.from_() can accept different collection types
+    # QSet.create() can accept different collection types
     set_data = {1, 2, 3}
     list_data = [2, 3, 4]
     tuple_data = (3, 4, 5)
 
-    result: QSet[int] = QSet.from_(set_data, list_data, tuple_data)
+    result: QSet[int] = QSet.create(set_data, list_data, tuple_data)
     assert len(result) == 5
     assert set(result) == {1, 2, 3, 4, 5}

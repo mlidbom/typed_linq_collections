@@ -40,7 +40,7 @@ class QList[TItem](list[TItem], QSequence[TItem], QIterable[TItem]):
         super().__init__(iterable)
 
     @staticmethod
-    def from_[T](*sources: Iterable[T]) -> QList[T]:
+    def create[T](*sources: Iterable[T]) -> QList[T]:
         """Creates a new QList by concatenating elements from multiple iterables.
 
         This method is useful for combining collections of different subtypes into
@@ -53,12 +53,12 @@ class QList[TItem](list[TItem], QSequence[TItem], QIterable[TItem]):
             A new QList containing all elements from all sources in order.
 
         Examples:
-            >>> QList.from_([1, 2], [3, 4], [5, 6])
+            >>> QList.create([1, 2], [3, 4], [5, 6])
             [1, 2, 3, 4, 5, 6]
             >>> # Combining subtypes into base type
             >>> dogs: QList[Dog] = QList([...])
             >>> cats: QList[Cat] = QList([...])
-            >>> all_animals: QList[Animal] = QList.from_(dogs, cats)
+            >>> all_animals: QList[Animal] = QList.create(dogs, cats)
         """
         if not sources:
             return QList()

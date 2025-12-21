@@ -51,7 +51,7 @@ class QFrozenSet[TItem](frozenset[TItem], QIterable[TItem]):
         return super().__new__(cls, iterable)
 
     @staticmethod
-    def from_[T](*sources: Iterable[T]) -> QFrozenSet[T]:
+    def create[T](*sources: Iterable[T]) -> QFrozenSet[T]:
         """Creates a new QFrozenSet by combining elements from multiple iterables.
 
         This method is useful for combining collections of different subtypes into
@@ -65,12 +65,12 @@ class QFrozenSet[TItem](frozenset[TItem], QIterable[TItem]):
             A new QFrozenSet containing unique elements from all sources.
 
         Examples:
-            >>> QFrozenSet.from_([1, 2], [2, 3], [3, 4])
+            >>> QFrozenSet.create([1, 2], [2, 3], [3, 4])
             frozenset({1, 2, 3, 4})
             >>> # Combining subtypes into base type
             >>> dogs: QFrozenSet[Dog] = QFrozenSet([...])
             >>> cats: QFrozenSet[Cat] = QFrozenSet([...])
-            >>> all_animals: QFrozenSet[Animal] = QFrozenSet.from_(dogs, cats)
+            >>> all_animals: QFrozenSet[Animal] = QFrozenSet.create(dogs, cats)
         """
         if not sources:
             return QFrozenSet()
