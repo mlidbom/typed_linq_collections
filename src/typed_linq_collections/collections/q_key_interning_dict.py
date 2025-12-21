@@ -11,15 +11,6 @@ _T = TypeVar("_T")
 class QKeyInterningDict[TValue](QDict[str, TValue]):
     """A specialized QDict that automatically interns all string keys before storing them.
 
-    String interning is a method of storing only one copy of each distinct string value.
-    This can save memory when the same string keys are used repeatedly across multiple
-    dictionaries, and can make key lookups faster (since interned strings can be compared
-    by identity rather than value).
-
-    All string keys added to this dictionary are automatically interned using Python's
-    sys.intern() function. This applies to keys added via any method: initialization,
-    __setitem__, update, setdefault, etc.
-
     Inheritance:
     - Inherits from QDict[str, TValue], providing all dictionary operations with automatic key interning
     - Maintains all LINQ-style query operations from QIterable on the keys
