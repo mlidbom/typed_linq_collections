@@ -54,23 +54,36 @@ class QDefaultDict[TKey, TItem](defaultdict[TKey, TItem], QIterable[TKey]):
     @override
     def _optimized_length(self) -> int: return len(self)
 
-    def __or__(self, other: dict[TKey, TItem]) -> Self:
+    @override
+    def __or__(self, other: dict[TKey, TItem]) -> Self:  # pyright: ignore[reportIncompatibleMethodOverride]
+        if self.default_factory is None:
+            msg = "default_factory cannot be None"
+            raise TypeError(msg)
         result = type(self)(self.default_factory)
         result.update(self)
         result.update(other)
         return result
 
-    def __ror__(self, other: dict[TKey, TItem]) -> Self:
+    @override
+    def __ror__(self, other: dict[TKey, TItem]) -> Self:  # pyright: ignore[reportIncompatibleMethodOverride]
+        if self.default_factory is None:
+            msg = "default_factory cannot be None"
+            raise TypeError(msg)
         result = type(self)(self.default_factory)
         result.update(other)
         result.update(self)
         return result
 
-    def __ior__(self, other: dict[TKey, TItem]) -> Self:
+    @override
+    def __ior__(self, other: dict[TKey, TItem]) -> Self:  # pyright: ignore[reportIncompatibleMethodOverride]
         super().__ior__(other)
         return self
 
+    @override
     def copy(self) -> Self:
+        if self.default_factory is None:
+            msg = "default_factory cannot be None"
+            raise TypeError(msg)
         result = type(self)(self.default_factory)
         result.update(self)
         return result

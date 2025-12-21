@@ -49,43 +49,52 @@ class QFrozenSet[TItem](frozenset[TItem], QIterable[TItem]):
     def _optimized_length(self) -> int: return len(self)
 
     # Binary operators
-    def __or__(self, other: frozenset[TItem]) -> Self:
+    @override
+    def __or__(self, other: frozenset[TItem]) -> Self:  # pyright: ignore[reportIncompatibleMethodOverride]
         return type(self)(super().__or__(other))
 
     def __ror__(self, other: frozenset[TItem]) -> Self:
-        return type(self)(super().__ror__(other))
+        return type(self)(super().__ror__(other))  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType, reportAttributeAccessIssue]
 
-    def __and__(self, other: frozenset[TItem]) -> Self:
+    @override
+    def __and__(self, other: frozenset[TItem]) -> Self:  # pyright: ignore[reportIncompatibleMethodOverride]
         return type(self)(super().__and__(other))
 
     def __rand__(self, other: frozenset[TItem]) -> Self:
-        return type(self)(super().__rand__(other))
+        return type(self)(super().__rand__(other))  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType, reportAttributeAccessIssue]
 
-    def __sub__(self, other: frozenset[TItem]) -> Self:
+    @override
+    def __sub__(self, other: frozenset[TItem]) -> Self:  # pyright: ignore[reportIncompatibleMethodOverride]
         return type(self)(super().__sub__(other))
 
     def __rsub__(self, other: frozenset[TItem]) -> Self:
-        return type(self)(super().__rsub__(other))
+        return type(self)(super().__rsub__(other))  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType, reportAttributeAccessIssue]
 
-    def __xor__(self, other: frozenset[TItem]) -> Self:
+    @override
+    def __xor__(self, other: frozenset[TItem]) -> Self:  # pyright: ignore[reportIncompatibleMethodOverride]
         return type(self)(super().__xor__(other))
 
     def __rxor__(self, other: frozenset[TItem]) -> Self:
-        return type(self)(super().__rxor__(other))
+        return type(self)(super().__rxor__(other))  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType, reportAttributeAccessIssue]
 
     # Methods
+    @override
     def copy(self) -> Self:
         return type(self)(super().copy())
 
-    def union(self, *others: Iterable[TItem]) -> Self:
+    @override
+    def union(self, *others: Iterable[TItem]) -> Self:  # pyright: ignore[reportIncompatibleMethodOverride]
         return type(self)(super().union(*others))
 
-    def intersection(self, *others: Iterable[TItem]) -> Self:
+    @override
+    def intersection(self, *others: Iterable[TItem]) -> Self:  # pyright: ignore[reportIncompatibleMethodOverride]
         return type(self)(super().intersection(*others))
 
-    def difference(self, *others: Iterable[TItem]) -> Self:
+    @override
+    def difference(self, *others: Iterable[TItem]) -> Self:  # pyright: ignore[reportIncompatibleMethodOverride]
         return type(self)(super().difference(*others))
 
+    @override
     def symmetric_difference(self, other: Iterable[TItem]) -> Self:
         return type(self)(super().symmetric_difference(other))
 

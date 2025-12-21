@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import sys
-from typing import TYPE_CHECKING, Self, SupportsIndex, overload, override
+from typing import TYPE_CHECKING, Self, SupportsIndex, cast, overload, override
 
 # noinspection PyProtectedMember
 from typed_linq_collections._private_implementation_details.q_lazy_iterable import QLazyIterableImplementation
@@ -89,25 +89,31 @@ class QList[TItem](list[TItem], QSequence[TItem], QIterable[TItem]):
             return QList(super().__getitem__(index))
         return super().__getitem__(index)
 
-    def __add__(self, other: list[TItem]) -> Self:
+    @override
+    def __add__(self, other: list[TItem]) -> Self:  # pyright: ignore[reportIncompatibleMethodOverride]
         return type(self)(super().__add__(other))
 
     def __radd__(self, other: list[TItem]) -> Self:
-        return type(self)(list.__add__(other, self))
+        return type(self)(cast(list[TItem], list.__add__(other, self)))  # pyright: ignore[reportUnknownMemberType]
 
-    def __mul__(self, other: int) -> Self:
+    @override
+    def __mul__(self, other: int) -> Self:  # pyright: ignore[reportIncompatibleMethodOverride]
         return type(self)(super().__mul__(other))
 
-    def __rmul__(self, other: int) -> Self:
-        return type(self)(list.__mul__(self, other))
+    @override
+    def __rmul__(self, other: int) -> Self:  # pyright: ignore[reportIncompatibleMethodOverride]
+        return type(self)(cast(list[TItem], list.__mul__(self, other)))  # pyright: ignore[reportUnknownMemberType]
 
-    def __iadd__(self, other: list[TItem]) -> Self:
+    @override
+    def __iadd__(self, other: list[TItem]) -> Self:  # pyright: ignore[reportIncompatibleMethodOverride]
         super().__iadd__(other)
         return self
 
-    def __imul__(self, other: int) -> Self:
+    @override
+    def __imul__(self, other: int) -> Self:  # pyright: ignore[reportIncompatibleMethodOverride]
         super().__imul__(other)
         return self
 
+    @override
     def copy(self) -> Self:
         return type(self)(super().copy())

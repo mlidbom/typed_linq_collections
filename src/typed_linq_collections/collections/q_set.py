@@ -66,59 +66,72 @@ class QSet[TItem](set[TItem], QIterable[TItem]):
         return value in self
 
     # Binary operators
-    def __or__(self, other: AbstractSet[TItem]) -> Self:  # type: ignore[override]
-        return type(self)(super().__or__(other))  # type: ignore[arg-type]
+    @override
+    def __or__(self, other: AbstractSet[TItem]) -> Self:  # pyright: ignore[reportIncompatibleMethodOverride]
+        return type(self)(super().__or__(other))  # type: ignore[arg-type]  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
 
     def __ror__(self, other: AbstractSet[TItem]) -> Self:
-        return type(self)(set.__or__(set(other), self))  # type: ignore[arg-type]
+        return type(self)(set.__or__(set(other), self))  # type: ignore[arg-type]  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
 
-    def __and__(self, other: AbstractSet[TItem]) -> Self:  # type: ignore[override]
-        return type(self)(super().__and__(other))  # type: ignore[arg-type]
+    @override
+    def __and__(self, other: AbstractSet[TItem]) -> Self:  # pyright: ignore[reportIncompatibleMethodOverride]
+        return type(self)(super().__and__(other))  # type: ignore[arg-type]  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
 
     def __rand__(self, other: AbstractSet[TItem]) -> Self:
-        return type(self)(set.__and__(set(other), self))  # type: ignore[arg-type]
+        return type(self)(set.__and__(set(other), self))  # type: ignore[arg-type]  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
 
-    def __sub__(self, other: AbstractSet[TItem]) -> Self:  # type: ignore[override]
-        return type(self)(super().__sub__(other))  # type: ignore[arg-type]
+    @override
+    def __sub__(self, other: AbstractSet[TItem]) -> Self:  # pyright: ignore[reportIncompatibleMethodOverride]
+        return type(self)(super().__sub__(other))  # type: ignore[arg-type]  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
 
     def __rsub__(self, other: AbstractSet[TItem]) -> Self:
-        return type(self)(set.__sub__(set(other), self))  # type: ignore[arg-type]
+        return type(self)(set.__sub__(set(other), self))  # type: ignore[arg-type]  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
 
-    def __xor__(self, other: AbstractSet[TItem]) -> Self:  # type: ignore[override]
-        return type(self)(super().__xor__(other))  # type: ignore[arg-type]
+    @override
+    def __xor__(self, other: AbstractSet[TItem]) -> Self:  # pyright: ignore[reportIncompatibleMethodOverride]
+        return type(self)(super().__xor__(other))  # type: ignore[arg-type]  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
 
     def __rxor__(self, other: AbstractSet[TItem]) -> Self:
-        return type(self)(set.__xor__(set(other), self))  # type: ignore[arg-type]
+        return type(self)(set.__xor__(set(other), self))  # type: ignore[arg-type]  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
 
     # In-place operators
+    @override
     def __ior__(self, other: AbstractSet[TItem]) -> Self:
         super().__ior__(other)
         return self
 
-    def __iand__(self, other: AbstractSet[TItem]) -> Self:  # type: ignore[override]
+    @override
+    def __iand__(self, other: AbstractSet[TItem]) -> Self:  # pyright: ignore[reportIncompatibleMethodOverride]
         super().__iand__(other)
         return self
 
-    def __isub__(self, other: AbstractSet[TItem]) -> Self:  # type: ignore[override]
+    @override
+    def __isub__(self, other: AbstractSet[TItem]) -> Self:  # pyright: ignore[reportIncompatibleMethodOverride]
         super().__isub__(other)
         return self
 
+    @override
     def __ixor__(self, other: AbstractSet[TItem]) -> Self:
         super().__ixor__(other)
         return self
 
     # Methods
+    @override
     def copy(self) -> Self:
         return type(self)(super().copy())
 
-    def union(self, *others: Iterable[TItem]) -> Self:  # type: ignore[override]
+    @override
+    def union(self, *others: Iterable[TItem]) -> Self:  # pyright: ignore[reportIncompatibleMethodOverride]
         return type(self)(super().union(*others))
 
+    @override
     def intersection(self, *others: Iterable[TItem]) -> Self:
         return type(self)(super().intersection(*others))
 
+    @override
     def difference(self, *others: Iterable[TItem]) -> Self:
         return type(self)(super().difference(*others))
 
+    @override
     def symmetric_difference(self, other: Iterable[TItem]) -> Self:
         return type(self)(super().symmetric_difference(other))
