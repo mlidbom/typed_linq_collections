@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, override
+from typing import TYPE_CHECKING, Self, override
 
 # noinspection PyPep8Naming,PyProtectedMember
 from typed_linq_collections._private_implementation_details.q_zero_overhead_collection_contructors import ZeroImportOverheadConstructors as C
@@ -50,3 +50,16 @@ class QDict[TKey, TItem](dict[TKey, TItem], QIterable[TKey]):
 
     @override
     def _optimized_length(self) -> int: return len(self)
+
+    def __or__(self, other: dict[TKey, TItem]) -> Self:
+        return type(self)(super().__or__(other).items())
+
+    def __ror__(self, other: dict[TKey, TItem]) -> Self:
+        return type(self)(dict.__or__(other, self).items())
+
+    def __ior__(self, other: dict[TKey, TItem]) -> Self:
+        super().__ior__(other)
+        return self
+
+    def copy(self) -> Self:
+        return type(self)(super().copy().items())

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import sys
-from typing import TYPE_CHECKING, SupportsIndex, overload, override
+from typing import TYPE_CHECKING, Self, SupportsIndex, overload, override
 
 # noinspection PyProtectedMember
 from typed_linq_collections._private_implementation_details.q_lazy_iterable import QLazyIterableImplementation
@@ -88,3 +88,26 @@ class QList[TItem](list[TItem], QSequence[TItem], QIterable[TItem]):
         if isinstance(index, slice):
             return QList(super().__getitem__(index))
         return super().__getitem__(index)
+
+    def __add__(self, other: list[TItem]) -> Self:
+        return type(self)(super().__add__(other))
+
+    def __radd__(self, other: list[TItem]) -> Self:
+        return type(self)(list.__add__(other, self))
+
+    def __mul__(self, other: int) -> Self:
+        return type(self)(super().__mul__(other))
+
+    def __rmul__(self, other: int) -> Self:
+        return type(self)(list.__mul__(self, other))
+
+    def __iadd__(self, other: list[TItem]) -> Self:
+        super().__iadd__(other)
+        return self
+
+    def __imul__(self, other: int) -> Self:
+        super().__imul__(other)
+        return self
+
+    def copy(self) -> Self:
+        return type(self)(super().copy())

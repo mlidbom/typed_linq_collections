@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections import defaultdict
-from typing import TYPE_CHECKING, override
+from typing import TYPE_CHECKING, Self, override
 
 # noinspection PyPep8Naming,PyProtectedMember
 from typed_linq_collections._private_implementation_details.q_zero_overhead_collection_contructors import ZeroImportOverheadConstructors as C
@@ -53,3 +53,24 @@ class QDefaultDict[TKey, TItem](defaultdict[TKey, TItem], QIterable[TKey]):
 
     @override
     def _optimized_length(self) -> int: return len(self)
+
+    def __or__(self, other: dict[TKey, TItem]) -> Self:
+        result = type(self)(self.default_factory)
+        result.update(self)
+        result.update(other)
+        return result
+
+    def __ror__(self, other: dict[TKey, TItem]) -> Self:
+        result = type(self)(self.default_factory)
+        result.update(other)
+        result.update(self)
+        return result
+
+    def __ior__(self, other: dict[TKey, TItem]) -> Self:
+        super().__ior__(other)
+        return self
+
+    def copy(self) -> Self:
+        result = type(self)(self.default_factory)
+        result.update(self)
+        return result
