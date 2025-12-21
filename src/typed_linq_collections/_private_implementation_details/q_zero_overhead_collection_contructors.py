@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Never
 
 if TYPE_CHECKING:
     import builtins
-    from collections.abc import Iterable
+    from collections.abc import Iterable, Mapping
     from decimal import Decimal
     from fractions import Fraction
 
@@ -100,10 +100,10 @@ class ZeroImportOverheadConstructors:
         return ZeroImportOverheadConstructors.default_dict(factory)
 
     @staticmethod
-    def dict[TKey, TValue](elements: Iterable[tuple[TKey, TValue]] = ()) -> QDict[TKey, TValue]:
+    def dict[TKey, TValue](mappings: Mapping[TKey, TValue] | Iterable[tuple[TKey, TValue]] = ()) -> QDict[TKey, TValue]:
         from typed_linq_collections.collections.q_dict import QDict
         ZeroImportOverheadConstructors.dict = QDict  # replace this method with a direct call so that future calls have zero import overhead
-        return ZeroImportOverheadConstructors.dict(elements)  # use the new version to prove from the very first call that it works
+        return ZeroImportOverheadConstructors.dict(mappings)  # use the new version to prove from the very first call that it works
 
     @staticmethod
     def int_iterable(factory: Func[Iterable[int]]) -> QIntIterable:  # pyright: ignore [reportInvalidTypeVarUse]
