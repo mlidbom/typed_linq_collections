@@ -1,11 +1,12 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, override
+from typing import TYPE_CHECKING, Self, override
 
 from typed_linq_collections.q_iterable import QIterable
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
+    from collections.abc import Set as AbstractSet
 
 
 class QSet[TItem](set[TItem], QIterable[TItem]):
@@ -63,3 +64,61 @@ class QSet[TItem](set[TItem], QIterable[TItem]):
             True
         """
         return value in self
+
+    # Binary operators
+    def __or__(self, other: AbstractSet[TItem]) -> Self:  # type: ignore[override]
+        return type(self)(super().__or__(other))  # type: ignore[arg-type]
+
+    def __ror__(self, other: AbstractSet[TItem]) -> Self:
+        return type(self)(set.__or__(set(other), self))  # type: ignore[arg-type]
+
+    def __and__(self, other: AbstractSet[TItem]) -> Self:  # type: ignore[override]
+        return type(self)(super().__and__(other))  # type: ignore[arg-type]
+
+    def __rand__(self, other: AbstractSet[TItem]) -> Self:
+        return type(self)(set.__and__(set(other), self))  # type: ignore[arg-type]
+
+    def __sub__(self, other: AbstractSet[TItem]) -> Self:  # type: ignore[override]
+        return type(self)(super().__sub__(other))  # type: ignore[arg-type]
+
+    def __rsub__(self, other: AbstractSet[TItem]) -> Self:
+        return type(self)(set.__sub__(set(other), self))  # type: ignore[arg-type]
+
+    def __xor__(self, other: AbstractSet[TItem]) -> Self:  # type: ignore[override]
+        return type(self)(super().__xor__(other))  # type: ignore[arg-type]
+
+    def __rxor__(self, other: AbstractSet[TItem]) -> Self:
+        return type(self)(set.__xor__(set(other), self))  # type: ignore[arg-type]
+
+    # In-place operators
+    def __ior__(self, other: AbstractSet[TItem]) -> Self:
+        super().__ior__(other)
+        return self
+
+    def __iand__(self, other: AbstractSet[TItem]) -> Self:  # type: ignore[override]
+        super().__iand__(other)
+        return self
+
+    def __isub__(self, other: AbstractSet[TItem]) -> Self:  # type: ignore[override]
+        super().__isub__(other)
+        return self
+
+    def __ixor__(self, other: AbstractSet[TItem]) -> Self:
+        super().__ixor__(other)
+        return self
+
+    # Methods
+    def copy(self) -> Self:
+        return type(self)(super().copy())
+
+    def union(self, *others: Iterable[TItem]) -> Self:  # type: ignore[override]
+        return type(self)(super().union(*others))
+
+    def intersection(self, *others: Iterable[TItem]) -> Self:
+        return type(self)(super().intersection(*others))
+
+    def difference(self, *others: Iterable[TItem]) -> Self:
+        return type(self)(super().difference(*others))
+
+    def symmetric_difference(self, other: Iterable[TItem]) -> Self:
+        return type(self)(super().symmetric_difference(other))
