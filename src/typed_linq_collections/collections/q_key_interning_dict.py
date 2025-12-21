@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Self, override
+from collections.abc import Iterable
+from typing import TypeVar, overload, override
 
 from typed_linq_collections.collections.q_dict import QDict
 
-if TYPE_CHECKING:
-    from collections.abc import Iterable
+_T = TypeVar("_T")
 
 
 class QKeyInterningDict[TValue](QDict[str, TValue]):
@@ -73,58 +73,6 @@ class QKeyInterningDict[TValue](QDict[str, TValue]):
         super().__setitem__(sys.intern(key), value)
 
     @override
-    def __delitem__(self, key: str) -> None:  # pyright: ignore[reportIncompatibleMethodOverride]
-        """Deletes the value associated with the interned version of the key.
-
-        Args:
-            key: The string key to intern and delete.
-        """
-        import sys
-        super().__delitem__(sys.intern(key))
-
-    @override
-    def __getitem__(self, key: str) -> TValue:  # pyright: ignore[reportIncompatibleMethodOverride]
-        """Gets the value associated with the interned version of the key.
-
-        Args:
-            key: The string key to intern and look up.
-
-        Returns:
-            The value associated with the key.
-        """
-        import sys
-        return super().__getitem__(sys.intern(key))
-
-    @override
-    def __contains__(self, key: object) -> bool:  # pyright: ignore[reportIncompatibleMethodOverride]
-        """Checks if the interned version of the key exists in the dictionary.
-
-        Args:
-            key: The key to check for.
-
-        Returns:
-            True if the key exists in the dictionary, False otherwise.
-        """
-        import sys
-        if isinstance(key, str):
-            return super().__contains__(sys.intern(key))
-        return super().__contains__(key)
-
-    @override
-    def get(self, key: str, default: TValue | None = None) -> TValue | None:  # pyright: ignore[reportIncompatibleMethodOverride]
-        """Gets the value for an interned key, returning a default if not found.
-
-        Args:
-            key: The string key to intern and look up.
-            default: The value to return if the key is not found.
-
-        Returns:
-            The value associated with the key, or the default value.
-        """
-        import sys
-        return super().get(sys.intern(key), default)
-
-    @override
     def setdefault(self, key: str, default: TValue | None = None) -> TValue | None:  # pyright: ignore[reportIncompatibleMethodOverride]
         """Gets the value for an interned key, setting it to default if not present.
 
@@ -136,21 +84,7 @@ class QKeyInterningDict[TValue](QDict[str, TValue]):
             The value associated with the key.
         """
         import sys
-        return super().setdefault(sys.intern(key), default)
-
-    @override
-    def pop(self, key: str, *args: TValue) -> TValue:  # pyright: ignore[reportIncompatibleMethodOverride]
-        """Removes and returns the value for an interned key.
-
-        Args:
-            key: The string key to intern and remove.
-            *args: Optional default value to return if key not found.
-
-        Returns:
-            The value associated with the key.
-        """
-        import sys
-        return super().pop(sys.intern(key), *args)
+        return super().setdefault(sys.intern(key), default)  # pyright: ignore[reportArgumentType]
 
     @override
     def update(self, *args: Iterable[tuple[str, TValue]] | dict[str, TValue], **kwargs: TValue) -> None:  # pyright: ignore[reportIncompatibleMethodOverride]
@@ -165,10 +99,10 @@ class QKeyInterningDict[TValue](QDict[str, TValue]):
         # Handle positional arguments
         for arg in args:
             if isinstance(arg, dict):
-                for key, value in arg.items():
-                    super().__setitem__(sys.intern(key), value)
+                for key, value in arg.items():  # pyright: ignore[reportUnknownVariableType]
+                    super().__setitem__(sys.intern(key), value)  # pyright: ignore[reportArgumentType, reportUnknownArgumentType]
             else:
-                for key, value in arg:
+                for key, value in arg:  # pyright: ignore[reportUnknownVariableType]
                     super().__setitem__(sys.intern(key), value)
 
         # Handle keyword arguments
@@ -176,8 +110,16 @@ class QKeyInterningDict[TValue](QDict[str, TValue]):
             super().__setitem__(sys.intern(key), value)
 
     @classmethod
+    @overload
+    def fromkeys(cls, keys: Iterable[str]) -> QKeyInterningDict[None]: ...
+
+    @classmethod
+    @overload
+    def fromkeys(cls, keys: Iterable[str], value: _T) -> QKeyInterningDict[_T]: ...
+
+    @classmethod
     @override
-    def fromkeys(cls, keys: Iterable[str], value: TValue | None = None) -> Self:  # pyright: ignore[reportIncompatibleMethodOverride]
+    def fromkeys(cls, keys: Iterable[str], value: _T | None = None) -> QKeyInterningDict[_T] | QKeyInterningDict[None]:  # pyright: ignore[reportIncompatibleMethodOverride]
         """Creates a new dictionary with interned keys from an iterable and values set to value.
 
         Args:
@@ -189,7 +131,7 @@ class QKeyInterningDict[TValue](QDict[str, TValue]):
         """
         import sys
         interned_keys = (sys.intern(key) for key in keys)
-        result = cls()
+        result = QKeyInterningDict[_T | None]()  # pyright: ignore[reportInvalidTypeArguments]
         for key in interned_keys:
-            result[key] = value  # type: ignore[assignment]
-        return result
+            result[key] = value  # pyright: ignore[reportArgumentType]
+        return result  # pyright: ignore[reportReturnType]

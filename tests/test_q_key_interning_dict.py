@@ -119,7 +119,7 @@ def test_q_key_interning_dict_get() -> None:
     assert test_dict.get("a") == 1
     assert test_dict.get("b") == 2
     assert test_dict.get("c") is None
-    assert test_dict.get("c", 99) == 99
+    assert test_dict.get("c", 99) == 99  # pyright: ignore[reportArgumentType]
 
 
 def test_q_key_interning_dict_setdefault() -> None:
@@ -148,14 +148,14 @@ def test_q_key_interning_dict_pop() -> None:
     assert len(test_dict) == 2
 
     # Pop with default
-    value = test_dict.pop("missing", 99)
+    value = test_dict.pop("missing", 99)  # pyright: ignore[reportArgumentType]
     assert value == 99
 
 
 def test_q_key_interning_dict_update_with_dict() -> None:
     """Test that update() method interns keys when updating with a dict."""
     test_dict = QKeyInterningDict([("a", 1)])
-    test_dict.update({"b": 2, "c": 3})
+    test_dict.update({"b": 2, "c": 3})  # pyright: ignore[reportArgumentType]
 
     # Verify all keys are interned
     for key in test_dict:
@@ -170,7 +170,7 @@ def test_q_key_interning_dict_update_with_dict() -> None:
 def test_q_key_interning_dict_update_with_iterable() -> None:
     """Test that update() method interns keys when updating with an iterable."""
     test_dict = QKeyInterningDict([("a", 1)])
-    test_dict.update([("b", 2), ("c", 3)])
+    test_dict.update([("b", 2), ("c", 3)])  # pyright: ignore[reportArgumentType]
 
     # Verify all keys are interned
     for key in test_dict:
@@ -185,7 +185,7 @@ def test_q_key_interning_dict_update_with_iterable() -> None:
 def test_q_key_interning_dict_update_with_kwargs() -> None:
     """Test that update() method interns keys when updating with keyword arguments."""
     test_dict = QKeyInterningDict([("a", 1)])
-    test_dict.update(b=2, c=3)
+    test_dict.update(b=2, c=3)  # pyright: ignore[reportArgumentType]
 
     # Verify all keys are interned
     for key in test_dict:
@@ -213,7 +213,7 @@ def test_q_key_interning_dict_memory_efficiency() -> None:
     """Test that interning actually uses the same object for duplicate keys."""
     # Create multiple dictionaries with the same keys
     dict1 = QKeyInterningDict([("key1", 1), ("key2", 2)])
-    dict2 = QKeyInterningDict([("key1", 10), ("key2", 20)])
+    QKeyInterningDict([("key1", 10), ("key2", 20)])
 
     # Keys should be the exact same objects across dictionaries
     for key in dict1:
@@ -272,8 +272,8 @@ def test_q_key_interning_dict_copy() -> None:
 
 def test_q_key_interning_dict_or_operator() -> None:
     """Test that | operator maintains interning."""
-    dict1 = QKeyInterningDict([("a", 1), ("b", 2)])
-    dict2 = QKeyInterningDict([("c", 3), ("d", 4)])
+    dict1: QKeyInterningDict[int] = QKeyInterningDict([("a", 1), ("b", 2)])
+    dict2: QKeyInterningDict[int] = QKeyInterningDict([("c", 3), ("d", 4)])
 
     result = dict1 | dict2
 

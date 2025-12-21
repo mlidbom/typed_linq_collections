@@ -71,7 +71,7 @@ def test_q_interning_string_set_add_stores_interned_not_original() -> None:
     original = str(uuid.uuid4())[:8]  # Random 8-char string like "a3b5c7d9"
 
     # Call intern to ensure the intern pool has this value
-    interned_version = sys.intern(original)
+    sys.intern(original)
 
     # Now add a new string with same content (might be auto-interned to same object)
     # The key point is that our implementation calls sys.intern explicitly
