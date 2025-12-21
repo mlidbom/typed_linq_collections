@@ -209,6 +209,9 @@ class QIntIterable(QIterable[int], ABC):
     def to_sequence(self) -> QIntSequence: return QIntSequence(self)
 
     @override
+    def to_tuple(self) -> tuple[int, ...]: return tuple(self)
+
+    @override
     def to_set(self) -> QIntSet: return QIntSet(self)
 
     @override

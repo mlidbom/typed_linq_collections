@@ -136,6 +136,11 @@ def test_to_sequence_returns_qfraction_sequence() -> None:
     assert isinstance(result, QFractionSequence)
     assert list(result) == [Fraction(1), Fraction(2), Fraction(3)]
 
+def test_to_tuple_returns_tuple_of_fractions() -> None:
+    result: tuple[Fraction, ...] = query([Fraction(1), Fraction(2), Fraction(3)]).as_fractions().to_tuple()
+    assert isinstance(result, tuple)
+    assert result == (Fraction(1), Fraction(2), Fraction(3))
+
 def test_to_set_returns_qfraction_set() -> None:
     result = query([Fraction(1), Fraction(2), Fraction(3)]).as_fractions().to_set()
     assert isinstance(result, QFractionSet)

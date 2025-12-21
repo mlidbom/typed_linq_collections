@@ -135,6 +135,11 @@ def test_to_sequence_returns_qfloat_sequence() -> None:
     assert isinstance(result, QFloatSequence)
     assert list(result) == [1.0, 2.0, 3.0]
 
+def test_to_tuple_returns_tuple_of_floats() -> None:
+    result: tuple[float, ...] = query([1.0, 2.0, 3.0]).as_floats().to_tuple()
+    assert isinstance(result, tuple)
+    assert result == (1.0, 2.0, 3.0)
+
 def test_to_set_returns_qfloat_set() -> None:
     result = query([1.0, 2.0, 3.0]).as_floats().to_set()
     assert isinstance(result, QFloatSet)

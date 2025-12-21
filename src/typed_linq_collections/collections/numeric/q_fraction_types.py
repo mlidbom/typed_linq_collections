@@ -217,6 +217,9 @@ class QFractionIterable(QIterable[Fraction], ABC):
     def to_sequence(self) -> QFractionSequence: return QFractionSequence(self)
 
     @override
+    def to_tuple(self) -> tuple[Fraction, ...]: return tuple(self)
+
+    @override
     def to_set(self) -> QFractionSet: return QFractionSet(self)
 
     @override

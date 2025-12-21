@@ -13,6 +13,11 @@ def test_to_sequence() -> None:
                                                lambda x: x.to_sequence(),
                                                [1, 2, 3])
 
+def test_to_tuple() -> None:
+    value_test_including_unordered_collections([1, 2, 3],
+                                               lambda x: x.to_tuple(),
+                                               (1, 2, 3))
+
 def test_to_builtin_list() -> None:
     value_test_including_unordered_collections([1, 2, 3],
                                                lambda x: x.to_built_in_list(),

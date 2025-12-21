@@ -217,6 +217,9 @@ class QDecimalIterable(QIterable[Decimal], ABC):
     def to_sequence(self) -> QDecimalSequence: return QDecimalSequence(self)
 
     @override
+    def to_tuple(self) -> tuple[Decimal, ...]: return tuple(self)
+
+    @override
     def to_set(self) -> QDecimalSet: return QDecimalSet(self)
 
     @override

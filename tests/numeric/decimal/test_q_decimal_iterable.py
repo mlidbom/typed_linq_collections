@@ -121,6 +121,11 @@ def test_to_sequence_returns_qdecimal_sequence() -> None:
     assert isinstance(result, QDecimalSequence)
     assert list(result) == [Decimal(1), Decimal(2), Decimal(3)]
 
+def test_to_tuple_returns_tuple_of_decimals() -> None:
+    result: tuple[Decimal, ...] = query([Decimal(1), Decimal(2), Decimal(3)]).as_decimals().to_tuple()
+    assert isinstance(result, tuple)
+    assert result == (Decimal(1), Decimal(2), Decimal(3))
+
 def test_to_set_returns_qdecimal_set() -> None:
     result = query([Decimal(1), Decimal(2), Decimal(3)]).as_decimals().to_set()
     assert isinstance(result, QDecimalSet)

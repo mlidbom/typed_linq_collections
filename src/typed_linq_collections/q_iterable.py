@@ -2169,6 +2169,30 @@ class QIterable[T](Iterable[T], ABC):
         """
         return C.sequence(self)
 
+    def to_tuple(self) -> tuple[T, ...]:
+        """Converts this iterable to a tuple containing all elements.
+
+        This method creates a new immutable tuple instance containing all elements from
+        this iterable. The tuple is a standard Python built-in tuple.
+
+        Returns:
+            A new tuple[T, ...] containing all elements from this iterable in the same order.
+
+        Examples:
+            >>> query([1, 2, 3]).where(lambda x: x > 1).to_tuple()
+            (2, 3)
+            >>> query("abc").to_tuple()
+            ('a', 'b', 'c')
+            >>> query([]).to_tuple()
+            ()
+            >>> # Materializes lazy operations into immutable tuple
+            >>> lazy_query = query(range(5)).where(lambda x: x % 2 == 0)
+            >>> result = lazy_query.to_tuple()  # Now evaluated and stored
+            >>> result
+            (0, 2, 4)
+        """
+        return tuple(self)
+
     def to_built_in_list(self) -> list[T]:
         """Converts this iterable to a standard Python list containing all elements.
 

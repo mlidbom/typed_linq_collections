@@ -209,6 +209,9 @@ class QFloatIterable(QIterable[float], ABC):
     def to_sequence(self) -> QFloatSequence: return QFloatSequence(self)
 
     @override
+    def to_tuple(self) -> tuple[float, ...]: return tuple(self)
+
+    @override
     def to_set(self) -> QFloatSet: return QFloatSet(self)
 
     @override

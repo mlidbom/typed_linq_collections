@@ -134,6 +134,11 @@ def test_to_sequence_returns_qint_sequence() -> None:
     assert isinstance(result, QIntSequence)
     assert list(result) == [1, 2, 3]
 
+def test_to_tuple_returns_tuple_of_ints() -> None:
+    result: tuple[int, ...] = query([1, 2, 3]).as_ints().to_tuple()
+    assert isinstance(result, tuple)
+    assert result == (1, 2, 3)
+
 def test_to_set_returns_qint_set() -> None:
     result = query([1, 2, 3]).as_ints().to_set()
     assert isinstance(result, QIntSet)
