@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 from collections import defaultdict
-from typing import TYPE_CHECKING, Self, override
+from collections.abc import Callable
+from typing import TYPE_CHECKING, Self, cast, override
 
 # noinspection PyPep8Naming,PyProtectedMember
 from typed_linq_collections._private_implementation_details.q_zero_overhead_collection_contructors import ZeroImportOverheadConstructors as C
@@ -56,20 +57,14 @@ class QDefaultDict[TKey, TItem](defaultdict[TKey, TItem], QIterable[TKey]):
 
     @override
     def __or__(self, other: dict[TKey, TItem]) -> Self:  # pyright: ignore[reportIncompatibleMethodOverride]
-        if self.default_factory is None:
-            msg = "default_factory cannot be None"
-            raise TypeError(msg)
-        result = type(self)(self.default_factory)
+        result = type(self)(cast(Callable[[], TItem], self.default_factory))
         result.update(self)
         result.update(other)
         return result
 
     @override
     def __ror__(self, other: dict[TKey, TItem]) -> Self:  # pyright: ignore[reportIncompatibleMethodOverride]
-        if self.default_factory is None:
-            msg = "default_factory cannot be None"
-            raise TypeError(msg)
-        result = type(self)(self.default_factory)
+        result = type(self)(cast(Callable[[], TItem], self.default_factory))
         result.update(other)
         result.update(self)
         return result
@@ -81,9 +76,6 @@ class QDefaultDict[TKey, TItem](defaultdict[TKey, TItem], QIterable[TKey]):
 
     @override
     def copy(self) -> Self:
-        if self.default_factory is None:
-            msg = "default_factory cannot be None"
-            raise TypeError(msg)
-        result = type(self)(self.default_factory)
+        result = type(self)(cast(Callable[[], TItem], self.default_factory))
         result.update(self)
         return result
