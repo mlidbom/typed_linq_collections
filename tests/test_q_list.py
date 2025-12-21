@@ -6,7 +6,7 @@ from typed_linq_collections.collections.q_list import QList
 
 
 def test_q_list_empty_constructor() -> None:
-    empty_list = QList()
+    empty_list = QList[str]()
     assert len(empty_list) == 0
     assert empty_list.to_list() == []
 

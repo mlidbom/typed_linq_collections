@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import sys
+from itertools import chain
 from typing import TYPE_CHECKING, Self, SupportsIndex, cast, overload, override
 
 # noinspection PyProtectedMember
@@ -25,14 +26,31 @@ class QList[TItem](list[TItem], QSequence[TItem], QIterable[TItem]):
     """
     __slots__: tuple[str, ...] = ()
 
-    def __init__(self, iterable: Iterable[TItem] = ()) -> None:
-        """Initializes a new QList with elements from the given iterable.
+    def __init__(self, *sources: Iterable[TItem]) -> None:
+        """Initializes a new QList with elements from one or more iterables.
+
+        When multiple sources are provided, they are concatenated in order.
 
         Args:
-            iterable: An iterable of elements to initialize the list with.
-                     Defaults to an empty sequence.
+            *sources: One or more iterables of elements to initialize the list with.
+                      Defaults to an empty sequence when no arguments provided.
+
+        Examples:
+            >>> QList([1, 2, 3])
+            [1, 2, 3]
+            >>> QList([1, 2], [3, 4], [5, 6])
+            [1, 2, 3, 4, 5, 6]
+            >>> # Combining subtypes into base type
+            >>> dogs: QList[Dog] = ...
+            >>> cats: QList[Cat] = ...
+            >>> all_animals: QList[Animal] = QList(dogs, cats)
         """
-        super().__init__(iterable)
+        if not sources:
+            super().__init__()
+        elif len(sources) == 1:
+            super().__init__(sources[0])
+        else:
+            super().__init__(chain(*sources))
 
     @override
     def _optimized_length(self) -> int: return len(self)

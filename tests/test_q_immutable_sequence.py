@@ -4,7 +4,7 @@ from typed_linq_collections.collections.q_immutable_sequence import QImmutableSe
 
 
 def test_q_immutable_sequence_empty_constructor() -> None:
-    empty_seq = QImmutableSequence()
+    empty_seq = QImmutableSequence[str]()
     assert len(empty_seq) == 0
     assert empty_seq.to_list() == []
 
@@ -33,7 +33,7 @@ def test_q_immutable_sequence_element_at() -> None:
 
 
 def test_q_immutable_sequence_repr() -> None:
-    empty_seq = QImmutableSequence()
+    empty_seq = QImmutableSequence[str]()
     assert repr(empty_seq) == "QImmutableSequence([])"
 
     test_seq = QImmutableSequence([1, 2, 3])

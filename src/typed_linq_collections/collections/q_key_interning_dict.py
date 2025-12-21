@@ -1,9 +1,11 @@
 from __future__ import annotations
 
-from collections.abc import Iterable
-from typing import TypeVar, overload, override
+from typing import TYPE_CHECKING, TypeVar, overload, override
 
 from typed_linq_collections.collections.q_dict import QDict
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
 
 _T = TypeVar("_T")
 

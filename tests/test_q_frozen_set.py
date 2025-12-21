@@ -4,7 +4,7 @@ from typed_linq_collections.collections.q_frozen_set import QFrozenSet
 
 
 def test_q_frozen_set_empty_constructor() -> None:
-    empty_set = QFrozenSet()
+    empty_set = QFrozenSet[str]()
     assert len(empty_set) == 0
     assert empty_set.to_list() == []
 
@@ -25,5 +25,5 @@ def test_q_frozen_set_qcount() -> None:
     test_set = QFrozenSet([1, 2, 3])
     assert test_set.qcount() == 3
 
-    empty_set = QFrozenSet()
+    empty_set = QFrozenSet[str]()
     assert empty_set.qcount() == 0

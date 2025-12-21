@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from itertools import chain
 from typing import TYPE_CHECKING, Never, Self, override
 
 from typed_linq_collections.q_iterable import QIterable
@@ -29,21 +30,36 @@ class QFrozenSet[TItem](frozenset[TItem], QIterable[TItem]):
     """
     __slots__: tuple[str, ...] = ()
 
-    def __new__(cls, iterable: Iterable[TItem] = ()) -> QFrozenSet[TItem]:
-        """Creates a new QFrozenSet with unique elements from the given iterable.
+    def __new__(cls, *sources: Iterable[TItem]) -> QFrozenSet[TItem]:
+        """Creates a new QFrozenSet with unique elements from one or more iterables.
 
-        Duplicate elements in the input iterable are automatically removed, maintaining
-        only unique values as per standard frozenset behavior.
+        Duplicate elements in the input iterables are automatically removed, maintaining
+        only unique values as per standard frozenset behavior. When multiple sources are
+        provided, they are concatenated in order before uniqueness is applied.
 
         Args:
-            iterable: An iterable of elements to initialize the frozenset with.
-                     Duplicates will be automatically removed.
-                     Defaults to an empty sequence.
+            *sources: One or more iterables of elements to initialize the frozenset with.
+                      Duplicates will be automatically removed.
+                      Defaults to an empty sequence when no arguments provided.
 
         Returns:
-            A new QFrozenSet instance containing the unique elements from the iterable.
+            A new QFrozenSet instance containing the unique elements from the iterables.
+
+        Examples:
+            >>> QFrozenSet([1, 2, 3])
+            frozenset({1, 2, 3})
+            >>> QFrozenSet([1, 2], [2, 3], [3, 4])
+            frozenset({1, 2, 3, 4})
+            >>> # Combining subtypes into base type
+            >>> dogs: QFrozenSet[Dog] = ...
+            >>> cats: QFrozenSet[Cat] = ...
+            >>> all_animals: QFrozenSet[Animal] = QFrozenSet(dogs, cats)
         """
-        return super().__new__(cls, iterable)
+        if not sources:
+            return super().__new__(cls)
+        if len(sources) == 1:
+            return super().__new__(cls, sources[0])
+        return super().__new__(cls, chain(*sources))
 
     @override
     def _optimized_length(self) -> int: return len(self)

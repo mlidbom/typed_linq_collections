@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from itertools import chain
 from typing import TYPE_CHECKING, overload, override
 
 # noinspection PyProtectedMember
@@ -37,18 +38,34 @@ class QImmutableSequence[TItem](ImmutableSequence[TItem], QSequence[TItem]):
     """
     __slots__: tuple[str, ...] = ()
 
-    def __init__(self, iterable: Iterable[TItem] = ()) -> None:
-        """Initializes a new QImmutableSequence with elements from the given iterable.
+    def __init__(self, *sources: Iterable[TItem]) -> None:
+        """Initializes a new QImmutableSequence with elements from one or more iterables.
 
         The sequence is created once and cannot be modified afterward. All elements
-        from the iterable are copied into the internal storage, preserving their order.
+        from the iterables are copied into the internal storage, preserving their order.
+        When multiple sources are provided, they are concatenated in order.
 
         Args:
-            iterable: An iterable of elements to initialize the sequence with.
-                     Elements will be stored in the order they appear in the iterable.
-                     Defaults to an empty sequence.
+            *sources: One or more iterables of elements to initialize the sequence with.
+                      Elements will be stored in the order they appear.
+                      Defaults to an empty sequence when no arguments provided.
+
+        Examples:
+            >>> QImmutableSequence([1, 2, 3])
+            [1, 2, 3]
+            >>> QImmutableSequence([1, 2], [3, 4], [5, 6])
+            [1, 2, 3, 4, 5, 6]
+            >>> # Combining subtypes into base type
+            >>> dogs: QImmutableSequence[Dog] = ...
+            >>> cats: QImmutableSequence[Cat] = ...
+            >>> all_animals: QImmutableSequence[Animal] = QImmutableSequence(dogs, cats)
         """
-        super().__init__(list(iterable))
+        if not sources:
+            super().__init__([])
+        elif len(sources) == 1:
+            super().__init__(list(sources[0]))
+        else:
+            super().__init__(list(chain(*sources)))
 
     @overload
     def __getitem__(self, index: int) -> TItem: ...

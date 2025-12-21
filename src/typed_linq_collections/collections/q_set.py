@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from itertools import chain
 from typing import TYPE_CHECKING, Self, override
 
 from typed_linq_collections.q_iterable import QIterable
@@ -23,18 +24,34 @@ class QSet[TItem](set[TItem], QIterable[TItem]):
     """
     __slots__: tuple[str, ...] = ()
 
-    def __init__(self, iterable: Iterable[TItem] = ()) -> None:
-        """Initializes a new QSet with unique elements from the given iterable.
+    def __init__(self, *sources: Iterable[TItem]) -> None:
+        """Initializes a new QSet with unique elements from one or more iterables.
 
-        Duplicate elements in the input iterable are automatically removed, maintaining
-        only unique values as per standard set behavior.
+        Duplicate elements in the input iterables are automatically removed, maintaining
+        only unique values as per standard set behavior. When multiple sources are provided,
+        they are concatenated in order before uniqueness is applied.
 
         Args:
-            iterable: An iterable of elements to initialize the set with.
-                     Duplicates will be automatically removed.
-                     Defaults to an empty sequence.
+            *sources: One or more iterables of elements to initialize the set with.
+                      Duplicates will be automatically removed.
+                      Defaults to an empty sequence when no arguments provided.
+
+        Examples:
+            >>> QSet([1, 2, 3])
+            {1, 2, 3}
+            >>> QSet([1, 2], [2, 3], [3, 4])
+            {1, 2, 3, 4}
+            >>> # Combining subtypes into base type
+            >>> dogs: QSet[Dog] = ...
+            >>> cats: QSet[Cat] = ...
+            >>> all_animals: QSet[Animal] = QSet(dogs, cats)
         """
-        super().__init__(iterable)
+        if not sources:
+            super().__init__()
+        elif len(sources) == 1:
+            super().__init__(sources[0])
+        else:
+            super().__init__(chain(*sources))
 
     @override
     def _optimized_length(self) -> int: return len(self)
