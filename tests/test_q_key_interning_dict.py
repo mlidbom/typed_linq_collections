@@ -32,6 +32,28 @@ def test_q_key_interning_dict_interns_on_init() -> None:
         assert key is sys.intern(key), f"Key '{key}' should be interned"
 
 
+def test_q_key_interning_dict_stores_interned_not_original_keys() -> None:
+    """Test that the dict stores interned key instances, not the original instances."""
+    # Create non-interned strings using chr() which doesn't auto-intern
+    original_key1 = chr(107) + chr(101) + chr(121) + chr(49)  # "key1"
+    original_key2 = chr(107) + chr(101) + chr(121) + chr(50)  # "key2"
+
+    # Verify they are not already interned
+    assert original_key1 is not sys.intern(original_key1), "Test setup failed: key already interned"
+    assert original_key2 is not sys.intern(original_key2), "Test setup failed: key already interned"
+
+    test_dict = QKeyInterningDict([(original_key1, "value1"), (original_key2, "value2")])
+
+    # Verify that stored keys are NOT the original instances
+    for stored_key in test_dict:
+        if stored_key == original_key1:
+            assert stored_key is not original_key1, "Should store interned version, not original"
+            assert stored_key is sys.intern(original_key1), "Should store sys.intern version"
+        elif stored_key == original_key2:
+            assert stored_key is not original_key2, "Should store interned version, not original"
+            assert stored_key is sys.intern(original_key2), "Should store sys.intern version"
+
+
 def test_q_key_interning_dict_setitem_interns() -> None:
     """Test that __setitem__ method interns keys."""
     test_dict: QKeyInterningDict[str] = QKeyInterningDict()
@@ -41,6 +63,22 @@ def test_q_key_interning_dict_setitem_interns() -> None:
     # Verify the key is interned
     stored_key = next(iter(test_dict))
     assert stored_key is sys.intern(test_key)
+
+
+def test_q_key_interning_dict_setitem_stores_interned_not_original() -> None:
+    """Test that __setitem__ stores interned key instance, not the original instance."""
+    test_dict: QKeyInterningDict[str] = QKeyInterningDict()
+    # Create non-interned string using chr() which doesn't auto-intern in all cases
+    original_key = chr(100) + chr(105) + chr(99) + chr(116) + chr(49)  # "dict1"
+
+    # Verify it's not already interned
+    assert original_key is not sys.intern(original_key), "Test setup failed: key already interned"
+
+    test_dict[original_key] = "test_value"
+
+    stored_key = next(iter(test_dict))
+    assert stored_key is not original_key, "Should store interned version, not original"
+    assert stored_key is sys.intern(original_key), "Should store sys.intern version"
 
 
 def test_q_key_interning_dict_getitem_with_interned_key() -> None:

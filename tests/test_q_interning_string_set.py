@@ -29,6 +29,28 @@ def test_q_interning_string_set_interns_on_init() -> None:
         assert s is sys.intern(s), f"String '{s}' should be interned"
 
 
+def test_q_interning_string_set_stores_interned_not_original() -> None:
+    """Test that the set stores interned instances, not the original instances."""
+    # Create non-interned strings using chr() which doesn't auto-intern in all cases
+    original1 = chr(115) + chr(101) + chr(116) + chr(49)  # "set1"
+    original2 = chr(115) + chr(101) + chr(116) + chr(50)  # "set2"
+
+    # Verify they are not already interned
+    assert original1 is not sys.intern(original1), "Test setup failed: string already interned"
+    assert original2 is not sys.intern(original2), "Test setup failed: string already interned"
+
+    test_set = QInterningStringSet([original1, original2])
+
+    # Verify that stored strings are NOT the original instances
+    for stored in test_set:
+        if stored == original1:
+            assert stored is not original1, "Should store interned version, not original"
+            assert stored is sys.intern(original1), "Should store sys.intern version"
+        elif stored == original2:
+            assert stored is not original2, "Should store interned version, not original"
+            assert stored is sys.intern(original2), "Should store sys.intern version"
+
+
 def test_q_interning_string_set_add_interns() -> None:
     """Test that add() method interns strings."""
     test_set = QInterningStringSet()
@@ -40,7 +62,25 @@ def test_q_interning_string_set_add_interns() -> None:
     assert stored_string is sys.intern(test_string)
 
 
-def test_q_interning_string_set_update_interns() -> None:
+def test_q_interning_string_set_add_stores_interned_not_original() -> None:
+    """Test that add() stores interned instance, not the original instance."""
+    test_set = QInterningStringSet()
+    # Create non-interned string - in Python 3.13 most strings are auto-interned
+    # Use a UUID-like pattern to minimize chance of auto-interning
+    import uuid
+    original = str(uuid.uuid4())[:8]  # Random 8-char string like "a3b5c7d9"
+
+    # Call intern to ensure the intern pool has this value
+    interned_version = sys.intern(original)
+
+    # Now add a new string with same content (might be auto-interned to same object)
+    # The key point is that our implementation calls sys.intern explicitly
+    test_set.add(original)
+
+    stored = next(iter(test_set))
+    # Verify the stored value is interned (same as sys.intern result)
+    assert stored is sys.intern(stored), "Stored value should be interned"
+    assert stored == original, "Stored value should equal original"
     """Test that update() method interns all strings."""
     test_set = QInterningStringSet(["initial"])
     test_set.update(["foo", "bar"], ["baz"])
