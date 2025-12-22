@@ -29,7 +29,7 @@ if TYPE_CHECKING:
 class ZeroImportOverheadConstructors:
     """This class contains static methods that are used to construct the collection classes with zero import overhead and without the need to complicate methods thoughouht the library by having to import these classes within functions in order to avoid circular imports."""
     @staticmethod
-    def list[TItem](iterable: Iterable[TItem]) -> QList[TItem]:
+    def list[TItem](iterable: Iterable[TItem] = ()) -> QList[TItem]:
         from typed_linq_collections.collections.q_list import QList
 
         ZeroImportOverheadConstructors.list = QList  # replace this method with a direct call so that future calls have zero import overhead

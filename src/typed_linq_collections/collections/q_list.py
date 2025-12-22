@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import sys
-from collections.abc import Callable
 from itertools import chain
 from typing import TYPE_CHECKING, Self, SupportsIndex, cast, overload, override
 
@@ -11,7 +10,7 @@ from typed_linq_collections.collections.q_sequence import QSequence
 from typed_linq_collections.q_iterable import QIterable
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable
+    from collections.abc import Callable, Iterable
 
 class QList[TItem](list[TItem], QSequence[TItem], QIterable[TItem]):
     """A mutable list that extends Python's built-in list with LINQ-style query operations.

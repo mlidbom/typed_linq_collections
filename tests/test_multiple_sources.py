@@ -1,21 +1,25 @@
 """Tests for multiple sources functionality using static from_() methods."""
 from __future__ import annotations
 
+from typing import override
+
 from typed_linq_collections.collections.q_frozen_set import QFrozenSet
 from typed_linq_collections.collections.q_immutable_sequence import QImmutableSequence
 from typed_linq_collections.collections.q_list import QList
 from typed_linq_collections.collections.q_set import QSet
-from typed_linq_collections.q_iterable import query, query_from
+from typed_linq_collections.q_iterable import QIterable, query, query_from
 
 
 # Test classes for type variance scenarios
 class Animal:
     def __init__(self, name: str) -> None:
-        self.name = name
+        self.name: str = name
 
+    @override
     def __eq__(self, other: object) -> bool:
         return isinstance(other, Animal) and self.name == other.name
 
+    @override
     def __hash__(self) -> int:
         return hash(self.name)
 
@@ -221,7 +225,7 @@ def test_query_from_single_source() -> None:
 
 
 def test_query_from_empty() -> None:
-    result = query_from()
+    result:QIterable[object] = query_from()
     assert result.to_list() == []
 
 

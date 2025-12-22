@@ -26,7 +26,7 @@ Failure message: {str(e).split("\n")[0]}
 def create_sequences[T](iterable: Iterable[T] | Callable[[], Iterable[T]], skip_sets: bool = False) -> list[tuple[str, QIterable[T]]]:
     factory: Callable[[], Iterable[T]] = (iterable
                                           if not isinstance(iterable, Iterable)
-                                          else lambda: cast(Iterable[T], iterable))
+                                          else lambda: cast(Iterable[T], iterable)) # pyright: ignore[reportUnnecessaryCast] one version warns about it being unnecessary the other warns if we don't have it. Joy
 
     values = [
         ("query", query(factory())),
