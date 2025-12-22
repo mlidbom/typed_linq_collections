@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Self, cast, override
+from collections.abc import Callable
+from typing import TYPE_CHECKING, Self, cast, overload, override
 
 # noinspection PyPep8Naming,PyProtectedMember
 from typed_linq_collections._private_implementation_details.q_zero_overhead_collection_contructors import ZeroImportOverheadConstructors as C
@@ -108,17 +109,24 @@ class QDict[TKey, TItem](dict[TKey, TItem], QIterable[TKey]):
         """
         self.pop(key, None)
 
-    def get_or_add(self, key: TKey, default: TItem) -> TItem:
+    @overload
+    def get_or_add(self, key: TKey, default: TItem) -> TItem: ...
+    @overload
+    def get_or_add(self, key: TKey, default: Callable[[], TItem]) -> TItem: ...
+
+    def get_or_add(self, key: TKey, default: TItem | Callable[[], TItem]) -> TItem:
         """Get the value for a key, or add and return a default if the key doesn't exist.
 
-        This is a more intuitively named alias for dict.setdefault().
+        This is a more intuitively named alias for dict.setdefault() with added support
+        for factory functions for lazy evaluation.
 
         Args:
             key: The key to look up or add.
-            default: The value to set and return if the key doesn't exist.
+            default: Either a value to set and return if the key doesn't exist,
+                    or a callable that returns the value when invoked.
 
         Returns:
-            The existing value if the key exists, or the default value after adding it.
+            The existing value if the key exists, or the default/factory result after adding it.
 
         Examples:
             >>> d = QDict({"a": 1})
@@ -126,10 +134,20 @@ class QDict[TKey, TItem](dict[TKey, TItem], QIterable[TKey]):
             1
             >>> d.get_or_add("b", 2)   # Key doesn't exist, adds it
             2
+            >>> d.get_or_add("c", lambda: 3)  # Factory function
+            3
             >>> d
-            {'a': 1, 'b': 2}
+            {'a': 1, 'b': 2, 'c': 3}
         """
-        return self.setdefault(key, default)
+        # For callable factories, we need to check if key exists first to avoid calling unnecessarily
+        if callable(default):
+            if key in self:
+                return self[key]
+            value = cast(TItem, default())
+            self[key] = value
+            return value
+        # For direct values, use optimized setdefault (single lookup)
+        return self.setdefault(key, cast(TItem, default))
 
     @override
     def _optimized_length(self) -> int: return len(self)
