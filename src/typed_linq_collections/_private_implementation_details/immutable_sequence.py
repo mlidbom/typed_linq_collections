@@ -41,9 +41,9 @@ class ImmutableSequence[TItem](Sequence[TItem]):
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Sequence):
             return False
-        if len(self) != len(other):  # pyright: ignore [reportUnknownArgumentType]
+        if len(self) != len(other):
             return False
-        return all(self_item == other_item for self_item, other_item in zip(self._items, other, strict=False))  # pyright: ignore [reportUnknownArgumentType, reportUnknownVariableType]
+        return all(self_item == other_item for self_item, other_item in zip(self._items, other, strict=False))
 
     @override
     def __repr__(self) -> str:

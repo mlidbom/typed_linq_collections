@@ -26,7 +26,7 @@ Failure message: {str(e).split("\n")[0]}
 def create_sequences[T](iterable: Iterable[T] | Callable[[], Iterable[T]], skip_sets: bool = False) -> list[tuple[str, QIterable[T]]]:
     factory: Callable[[], Iterable[T]] = (iterable
                                           if not isinstance(iterable, Iterable)
-                                          else lambda: cast(Iterable[T], iterable))  # pyright: ignore[reportUnnecessaryCast] while basedpyright understands it is not needed, pyright does not
+                                          else lambda: cast(Iterable[T], iterable))
 
     values = [
         ("query", query(factory())),

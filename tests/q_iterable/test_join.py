@@ -137,7 +137,7 @@ class TestJoin:
 
     def test_join_with_none_keys_match_each_other(self) -> None:
         people = [Person(1, "Alice"), Person(None, "Bob")]
-        orders = [Order(101, 1, 100.0), Order(102, None, 200.0)]  # type: ignore
+        orders = [Order(101, 1, 100.0), Order(102, None, 200.0)]
 
         result = (query(people)
                   .join(orders,
