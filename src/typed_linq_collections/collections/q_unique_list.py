@@ -66,9 +66,8 @@ class QUniqueList[TItem](QIterable[TItem]):
             >>> QUniqueList([1, 2, 2, 3])  # Duplicates removed
             QUniqueList([1, 2, 3])
         """
-        self._items: list[TItem] = []
-        for item in iterable:
-            self.add(item)
+
+        self._items: list[TItem] = sorted(set(iterable), key=hash)
 
     @staticmethod
     def create[T](*sources: Iterable[T]) -> QUniqueList[T]:
@@ -358,10 +357,9 @@ class QUniqueList[TItem](QIterable[TItem]):
             >>> list(ul1.union(ul2))
             [1, 2, 3, 4, 5]
         """
-        result = self.copy()
-        for other in others:
-            for item in other:
-                result.add(item)
+        # Combine all iterables and deduplicate in one operation
+        result: Self = type(self).__new__(type(self))
+        result._items = sorted(dict.fromkeys(chain(self._items, *others)), key=hash)
         return result
 
     def intersection(self, *others: Iterable[TItem]) -> Self:
@@ -434,19 +432,14 @@ class QUniqueList[TItem](QIterable[TItem]):
             [1, 2, 4, 5]
         """
         other_set = set(other)
+        self_set = set(self._items)
+
+        # Collect items from self not in other and items from other not in self
+        unique_items = [item for item in self._items if item not in other_set]
+        unique_items.extend(item for item in other_set if item not in self_set)
+
         result: Self = type(self).__new__(type(self))
-        result._items = []
-
-        # Add items from self not in other
-        for item in self._items:
-            if item not in other_set:
-                result.add(item)
-
-        # Add items from other not in self
-        for item in other_set:
-            if item not in self:
-                result.add(item)
-
+        result._items = sorted(unique_items, key=hash)
         return result
 
     def issubset(self, other: Iterable[TItem]) -> bool:

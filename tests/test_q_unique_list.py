@@ -45,7 +45,7 @@ def test_remove_raises_on_missing() -> None:
     ul = QUniqueList([1, 2, 3])
     try:
         ul.remove(999)
-        assert False, "Should raise ValueError"
+        raise AssertionError("Should raise ValueError")
     except ValueError as e:
         assert "999" in str(e)
 

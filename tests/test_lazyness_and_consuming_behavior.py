@@ -96,6 +96,7 @@ scalar_or_action_operators: list[tuple[str, ScalarOrActionOperator]] = [
     ("to_sequence", lambda x1: x1.to_sequence()),
     ("to_set", lambda x1: x1.to_set()),
     ("to_tuple", lambda x1: x1.to_tuple()),
+    ("to_unique_list", lambda x1: x1.to_unique_list()),
     ("sequence_equal", lambda x1: x1.sequence_equal([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])),
 ]
 
