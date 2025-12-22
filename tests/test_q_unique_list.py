@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import override
+
 from typed_linq_collections.collections.q_unique_list import QUniqueList
 
 
@@ -220,7 +222,7 @@ def test_create_multiple_sources() -> None:
 
 
 def test_create_empty() -> None:
-    result = QUniqueList.create()
+    result: QUniqueList[int] = QUniqueList.create()
     assert len(result) == 0
 
 
@@ -242,14 +244,16 @@ def test_with_strings() -> None:
 def test_with_custom_objects() -> None:
     class Person:
         def __init__(self, name: str, age: int) -> None:
-            self.name = name
-            self.age = age
+            self.name:str = name
+            self.age:int = age
 
+        @override
         def __eq__(self, other: object) -> bool:
             if isinstance(other, Person):
                 return self.name == other.name and self.age == other.age
             return False
 
+        @override
         def __hash__(self) -> int:
             return hash((self.name, self.age))
 
@@ -264,14 +268,18 @@ def test_with_custom_objects() -> None:
 def test_hash_collision_handling() -> None:
     # Create objects with the same hash but different values
     class CollidingObject:
+        value: int
+
         def __init__(self, value: int) -> None:
             self.value = value
 
+        @override
         def __eq__(self, other: object) -> bool:
             if isinstance(other, CollidingObject):
                 return self.value == other.value
             return False
 
+        @override
         def __hash__(self) -> int:
             return 42  # Always return same hash
 

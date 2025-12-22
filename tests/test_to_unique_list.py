@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from typed_linq_collections.collections.q_unique_list import QUniqueList
 from typed_linq_collections.q_iterable import query
 
 
@@ -16,7 +17,7 @@ def test_to_unique_list_with_duplicates() -> None:
 
 
 def test_to_unique_list_empty() -> None:
-    result = query([]).to_unique_list()
+    result: QUniqueList[int] = query([int()]).where(lambda x: False).to_unique_list()
     assert len(result) == 0
 
 

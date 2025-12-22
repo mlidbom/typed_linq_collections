@@ -324,7 +324,7 @@ class QUniqueList[TItem](QIterable[TItem]):
             False
         """
         if isinstance(other, QUniqueList):
-            return set(self._items) == set(other._items)
+            return set(self._items) == set(other._items)  # pyright: ignore[reportUnknownMemberType,reportUnknownArgumentType]
         return NotImplemented
 
     def __bool__(self) -> bool:
