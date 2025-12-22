@@ -201,6 +201,41 @@ def test_q_default_dict_get_value_or_default_factory_not_called_when_key_exists(
     assert call_count == 0  # Factory never called
     assert set(test_dict.keys()) == {"a"}
 
+
+def test_q_default_dict_get_value_or_default_uses_default_factory() -> None:
+    """Test that get_value_or_default uses the instance's default_factory when no factory is provided."""
+    test_dict: QDefaultDict[str, int] = QDefaultDict(int)
+    test_dict["a"] = 42
+    
+    # Existing key should return the value
+    result = test_dict.get_value_or_default("a")
+    assert result == 42
+    
+    # Missing key should use default_factory (int() returns 0)
+    result = test_dict.get_value_or_default("b")
+    assert result == 0
+    
+    # Dict should remain unchanged
+    assert set(test_dict.keys()) == {"a"}
+
+
+def test_q_default_dict_get_value_or_default_custom_factory_overrides_default() -> None:
+    """Test that providing a custom factory overrides the instance's default_factory."""
+    test_dict: QDefaultDict[str, list[int]] = QDefaultDict(list)
+    test_dict["a"] = [1, 2, 3]
+    
+    # Custom factory should be used instead of default_factory
+    result = test_dict.get_value_or_default("b", lambda k: [99])
+    assert result == [99]
+    
+    # Default factory should be used when no factory provided
+    result = test_dict.get_value_or_default("c")
+    assert result == []
+    
+    # Dict should remain unchanged
+    assert set(test_dict.keys()) == {"a"}
+
+
 def test_q_default_dict_remove_where_by_value() -> None:
     test_dict: QDefaultDict[str, int] = QDefaultDict(int)
     test_dict["a"] = 1

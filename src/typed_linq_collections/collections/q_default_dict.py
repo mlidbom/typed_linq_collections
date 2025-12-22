@@ -140,33 +140,36 @@ class QDefaultDict[TKey, TItem](defaultdict[TKey, TItem], QIterable[TKey]):
         self[key] = value
         return value
 
-    def get_value_or_default(self, key: TKey, factory: Callable[[TKey], TItem]) -> TItem:
-        """Get the value for a key, or return a factory-created value without modifying the dictionary.
+    def get_value_or_default(self, key: TKey, factory: Callable[[TKey], TItem] | None = None) -> TItem:
+        """Get the value for a key, or return a default value without modifying the dictionary.
 
         Unlike get_or_add, this method does not add the key to the dictionary.
-        Note: For QDefaultDict, this won't trigger the default_factory.
-        The factory function receives the key as an argument.
+        If no factory is provided, uses the instance's default_factory.
 
         Args:
             key: The key to look up.
-            factory: A callable that takes the key and returns the value if the key doesn't exist.
-                    Only called if the key is not present.
+            factory: Optional callable that takes the key and returns the value if the key doesn't exist.
+                    If None, uses the instance's default_factory. Only called if the key is not present.
 
         Returns:
-            The existing value if the key exists, or the factory result.
+            The existing value if the key exists, or the factory/default_factory result.
 
         Examples:
             >>> d = QDefaultDict(int)
             >>> d["a"] = 1
-            >>> d.get_value_or_default("a", lambda k: 99)  # Key exists, factory not called
+            >>> d.get_value_or_default("a")  # Key exists
             1
-            >>> d.get_value_or_default("b", lambda k: 2)   # Key doesn't exist, factory called
-            2
+            >>> d.get_value_or_default("b")  # Uses default factory (int())
+            0
+            >>> d.get_value_or_default("c", lambda k: 99)  # Custom factory
+            99
             >>> "b" in d  # Dictionary unchanged
             False
         """
         if key in self:
             return self[key]
+        if factory is None:
+            return cast(Callable[[], TItem], self.default_factory)()
         return factory(key)
 
     def remove_where(self, predicate: Callable[[KeyValuePair[TKey, TItem]], bool]) -> int:
