@@ -33,6 +33,7 @@ if TYPE_CHECKING:
     from typed_linq_collections.collections.q_list import QList
     from typed_linq_collections.collections.q_sequence import QSequence
     from typed_linq_collections.collections.q_set import QSet
+    from typed_linq_collections.collections.q_unique_list import QUniqueList
     from typed_linq_collections.q_cast import QCast
     from typed_linq_collections.q_grouping import QGrouping
     from typed_linq_collections.q_ordered_iterable import QOrderedIterable
@@ -2154,6 +2155,35 @@ class QIterable[T](Iterable[T], ABC):
             {1}
         """
         return C.set(self)
+
+    def to_unique_list(self) -> QUniqueList[T]:
+        """Converts this iterable to a QUniqueList containing all unique elements.
+
+        This method creates a new QUniqueList instance containing all distinct elements
+        from this iterable. Duplicate elements are automatically removed.
+        QUniqueList is a memory-efficient alternative to set that stores unique elements
+        in a sorted list (by hash), providing O(log n) lookups with minimal memory overhead.
+
+        Use this when memory is constrained and you can accept O(n) insertions.
+        Use to_set() when you need O(1) insertions/deletions.
+
+        Returns:
+            A new QUniqueList[T] containing all unique elements from this iterable,
+            providing all the query operators from QIterable.
+
+        Examples:
+            >>> query([1, 2, 2, 3, 3]).to_unique_list()
+            QUniqueList([1, 2, 3])
+            >>> query(["apple", "banana", "apple"]).to_unique_list()
+            QUniqueList(['apple', 'banana'])
+            >>> query([]).to_unique_list()
+            QUniqueList([])
+            >>> # Memory-efficient uniqueness
+            >>> query([1, 1, 1, 1]).to_unique_list()
+            QUniqueList([1])
+        """
+        from typed_linq_collections.collections.q_unique_list import QUniqueList
+        return QUniqueList(self)
 
     def to_frozenset(self) -> QFrozenSet[T]:
         """Converts this iterable to a QFrozenSet containing all unique elements.
