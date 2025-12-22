@@ -92,6 +92,30 @@ class QDefaultDict[TKey, TItem](defaultdict[TKey, TItem], QIterable[TKey]):
         """
         self.pop(key, None)
 
+    def get_or_add(self, key: TKey, default: TItem) -> TItem:
+        """Get the value for a key, or add and return a default if the key doesn't exist.
+
+        This is a more intuitively named alias for dict.setdefault().
+
+        Args:
+            key: The key to look up or add.
+            default: The value to set and return if the key doesn't exist.
+
+        Returns:
+            The existing value if the key exists, or the default value after adding it.
+
+        Examples:
+            >>> d = QDefaultDict(int)
+            >>> d["a"] = 1
+            >>> d.get_or_add("a", 99)  # Key exists
+            1
+            >>> d.get_or_add("b", 2)   # Key doesn't exist, adds it
+            2
+            >>> "b" in d
+            True
+        """
+        return self.setdefault(key, default)
+
     @override
     def _optimized_length(self) -> int: return len(self)
 
