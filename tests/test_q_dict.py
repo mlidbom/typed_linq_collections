@@ -167,3 +167,23 @@ def test_q_dict_get_value_or_default_factory_not_called_when_key_exists() -> Non
     assert result == 1
     assert call_count == 0  # Factory never called
     assert test_dict == {"a": 1}
+
+def test_q_dict_remove_where_by_value() -> None:
+    test_dict: QDict[str, int] = QDict({"a": 1, "b": 2, "c": 3})
+    removed = test_dict.remove_where(lambda kv: kv.value > 1)
+    assert removed == 2
+    assert test_dict == {"a": 1}
+
+
+def test_q_dict_remove_where_by_key() -> None:
+    test_dict: QDict[str, int] = QDict({"a": 1, "b": 2, "c": 3})
+    removed = test_dict.remove_where(lambda kv: kv.key.startswith("b"))
+    assert removed == 1
+    assert test_dict == {"a": 1, "c": 3}
+
+
+def test_q_dict_remove_where_none_match() -> None:
+    test_dict: QDict[str, int] = QDict({"a": 1, "b": 2})
+    removed = test_dict.remove_where(lambda kv: kv.value > 10)
+    assert removed == 0
+    assert test_dict == {"a": 1, "b": 2}

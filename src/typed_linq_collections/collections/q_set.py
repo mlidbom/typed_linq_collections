@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections.abc import Callable
 from itertools import chain
 from typing import TYPE_CHECKING, Self, override
 
@@ -70,6 +71,27 @@ class QSet[TItem](set[TItem], QIterable[TItem]):
         if len(sources) == 1:
             return QSet(sources[0])
         return QSet(chain(*sources))
+
+    def remove_where(self, predicate: Callable[[TItem], bool]) -> int:
+        """Remove all items matching the predicate.
+
+        Args:
+            predicate: A function that returns True for items to remove.
+
+        Returns:
+            The number of items removed.
+
+        Examples:
+            >>> s = QSet({1, 2, 3, 4, 5})
+            >>> s.remove_where(lambda x: x % 2 == 0)
+            2
+            >>> s
+            {1, 3, 5}
+        """
+        to_remove = [item for item in self if predicate(item)]
+        for item in to_remove:
+            self.remove(item)
+        return len(to_remove)
 
     @override
     def _optimized_length(self) -> int: return len(self)

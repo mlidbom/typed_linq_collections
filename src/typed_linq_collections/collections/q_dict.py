@@ -186,6 +186,27 @@ class QDict[TKey, TItem](dict[TKey, TItem], QIterable[TKey]):
         # For direct values, use optimized get (single lookup)
         return self.get(key, cast(TItem, default))
 
+    def remove_where(self, predicate: Callable[[KeyValuePair[TKey, TItem]], bool]) -> int:
+        """Remove all key-value pairs matching the predicate.
+
+        Args:
+            predicate: A function that takes a KeyValuePair and returns True for pairs to remove.
+
+        Returns:
+            The number of pairs removed.
+
+        Examples:
+            >>> d = QDict({"a": 1, "b": 2, "c": 3})
+            >>> d.remove_where(lambda kv: kv.value > 1)
+            2
+            >>> d
+            {'a': 1}
+        """
+        keys_to_remove = [kv.key for kv in self.qitems() if predicate(kv)]
+        for key in keys_to_remove:
+            del self[key]
+        return len(keys_to_remove)
+
     @override
     def _optimized_length(self) -> int: return len(self)
 

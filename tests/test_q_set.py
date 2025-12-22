@@ -27,3 +27,24 @@ def test_q_set_qcount() -> None:
 
     empty_set = QSet[str]()
     assert empty_set.qcount() == 0
+
+
+def test_q_set_remove_where() -> None:
+    test_set: QSet[int] = QSet({1, 2, 3, 4, 5})
+    removed = test_set.remove_where(lambda x: x > 3)
+    assert removed == 2
+    assert test_set == {1, 2, 3}
+
+
+def test_q_set_remove_where_even_numbers() -> None:
+    test_set: QSet[int] = QSet({1, 2, 3, 4, 5, 6})
+    removed = test_set.remove_where(lambda x: x % 2 == 0)
+    assert removed == 3
+    assert test_set == {1, 3, 5}
+
+
+def test_q_set_remove_where_none_match() -> None:
+    test_set: QSet[int] = QSet({1, 2, 3})
+    removed = test_set.remove_where(lambda x: x > 10)
+    assert removed == 0
+    assert test_set == {1, 2, 3}

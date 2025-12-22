@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import sys
+from collections.abc import Callable
 from itertools import chain
 from typing import TYPE_CHECKING, Self, SupportsIndex, cast, overload, override
 
@@ -84,6 +85,27 @@ class QList[TItem](list[TItem], QSequence[TItem], QIterable[TItem]):
         """
         if value in self:
             self.remove(value)
+
+    def remove_where(self, predicate: Callable[[TItem], bool]) -> int:
+        """Remove all items matching the predicate.
+
+        Args:
+            predicate: A function that returns True for items to remove.
+
+        Returns:
+            The number of items removed.
+
+        Examples:
+            >>> lst = QList([1, 2, 3, 4, 5])
+            >>> lst.remove_where(lambda x: x > 3)
+            2
+            >>> lst
+            [1, 2, 3]
+        """
+        to_remove = [item for item in self if predicate(item)]
+        for item in to_remove:
+            self.remove(item)
+        return len(to_remove)
 
     @override
     def _optimized_length(self) -> int: return len(self)

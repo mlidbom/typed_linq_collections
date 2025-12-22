@@ -89,3 +89,24 @@ def test_q_list_discard_silent_on_missing() -> None:
     test_list.discard(999)  # Should not raise
     assert len(test_list) == 3
     assert test_list.to_list() == [1, 2, 3]
+
+
+def test_q_list_remove_where() -> None:
+    test_list: QList[int] = QList([1, 2, 3, 4, 5])
+    removed = test_list.remove_where(lambda x: x > 3)
+    assert removed == 2
+    assert test_list.to_list() == [1, 2, 3]
+
+
+def test_q_list_remove_where_even_numbers() -> None:
+    test_list: QList[int] = QList([1, 2, 3, 4, 5, 6])
+    removed = test_list.remove_where(lambda x: x % 2 == 0)
+    assert removed == 3
+    assert test_list.to_list() == [1, 3, 5]
+
+
+def test_q_list_remove_where_none_match() -> None:
+    test_list: QList[int] = QList([1, 2, 3])
+    removed = test_list.remove_where(lambda x: x > 10)
+    assert removed == 0
+    assert test_list.to_list() == [1, 2, 3]
