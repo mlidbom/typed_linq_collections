@@ -105,13 +105,11 @@ class QInterningList(QList[str]):
             index: The index or slice to set.
             value: The string or iterable of strings to intern and set.
         """
-        from collections.abc import Iterable as AbstractIterable
-
         if isinstance(index, slice):
-            if not isinstance(value, AbstractIterable):  # pyright: ignore[reportUnnecessaryIsInstance]
-                raise TypeError("can only assign an iterable")
+            # For slices, intern all strings in the iterable (including when value is a string)
             super().__setitem__(index, [self._intern_func(s) for s in value])  # pyright: ignore[reportArgumentType]
         else:
+            # For single index, value must be a string
             if not isinstance(value, str):
                 raise TypeError("value must be a string")
             super().__setitem__(index, self._intern_func(value))
