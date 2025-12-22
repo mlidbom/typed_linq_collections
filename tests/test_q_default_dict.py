@@ -73,7 +73,7 @@ def test_q_default_dict_get_or_add_existing_key() -> None:
     test_dict: QDefaultDict[str, int] = QDefaultDict(int)
     test_dict["a"] = 1
     test_dict["b"] = 2
-    result = test_dict.get_or_add("a", 99)
+    result = test_dict.get_or_add("a", lambda k: 99)
     assert result == 1  # Returns existing value
     assert set(test_dict.keys()) == {"a", "b"}  # Dict unchanged
 
@@ -81,16 +81,16 @@ def test_q_default_dict_get_or_add_existing_key() -> None:
 def test_q_default_dict_get_or_add_new_key() -> None:
     test_dict: QDefaultDict[str, int] = QDefaultDict(int)
     test_dict["a"] = 1
-    result = test_dict.get_or_add("b", 2)
+    result = test_dict.get_or_add("b", lambda k: 2)
     assert result == 2  # Returns new value
     assert set(test_dict.keys()) == {"a", "b"}  # Key added to dict
 
 
 def test_q_default_dict_get_or_add_multiple() -> None:
     test_dict: QDefaultDict[str, int] = QDefaultDict(int)
-    val1 = test_dict.get_or_add("x", 10)
-    val2 = test_dict.get_or_add("y", 20)
-    val3 = test_dict.get_or_add("x", 99)  # Already exists
+    val1 = test_dict.get_or_add("x", lambda k: 10)
+    val2 = test_dict.get_or_add("y", lambda k: 20)
+    val3 = test_dict.get_or_add("x", lambda k: 99)  # Already exists
     assert val1 == 10
     assert val2 == 20
     assert val3 == 10  # Returns original value, not 99
@@ -125,7 +125,7 @@ def test_q_default_dict_qvalues_empty() -> None:
 def test_q_default_dict_get_or_add_with_factory() -> None:
     test_dict: QDefaultDict[str, int] = QDefaultDict(int)
     test_dict["a"] = 1
-    result = test_dict.get_or_add("b", lambda: 2)
+    result = test_dict.get_or_add("b", lambda k: 2)
     assert result == 2
     assert set(test_dict.keys()) == {"a", "b"}
 
@@ -135,7 +135,7 @@ def test_q_default_dict_get_or_add_factory_not_called_when_key_exists() -> None:
     test_dict["a"] = 1
     call_count = 0
 
-    def factory() -> int:
+    def factory(key: str) -> int:
         nonlocal call_count
         call_count += 1
         return 99
@@ -151,7 +151,7 @@ def test_q_default_dict_get_or_add_factory_called_when_key_missing() -> None:
     test_dict["a"] = 1
     call_count = 0
 
-    def factory() -> int:
+    def factory(key: str) -> int:
         nonlocal call_count
         call_count += 1
         return 42

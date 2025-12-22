@@ -109,45 +109,42 @@ class QDict[TKey, TItem](dict[TKey, TItem], QIterable[TKey]):
         """
         self.pop(key, None)
 
-    @overload
-    def get_or_add(self, key: TKey, default: TItem) -> TItem: ...
-    @overload
-    def get_or_add(self, key: TKey, default: Callable[[], TItem]) -> TItem: ...
+    def get_or_add(self, key: TKey, factory: Callable[[TKey], TItem]) -> TItem:
+        """Get the value for a key, or add and return a factory-created value if the key doesn't exist.
 
-    def get_or_add(self, key: TKey, default: TItem | Callable[[], TItem]) -> TItem:
-        """Get the value for a key, or add and return a default if the key doesn't exist.
-
-        This is a more intuitively named alias for dict.setdefault() with added support
-        for factory functions for lazy evaluation.
+        The factory function receives the key as an argument, allowing constructors and other
+        single-argument functions to be passed directly without lambda wrapping.
 
         Args:
             key: The key to look up or add.
-            default: Either a value to set and return if the key doesn't exist,
-                    or a callable that returns the value when invoked.
+            factory: A callable that takes the key and returns the value to add if the key doesn't exist.
+                    Only called if the key is not present.
 
         Returns:
-            The existing value if the key exists, or the default/factory result after adding it.
+            The existing value if the key exists, or the factory result after adding it.
 
         Examples:
             >>> d = QDict({"a": 1})
-            >>> d.get_or_add("a", 99)  # Key exists
+            >>> d.get_or_add("a", lambda k: 99)  # Key exists, factory not called
             1
-            >>> d.get_or_add("b", 2)   # Key doesn't exist, adds it
-            2
-            >>> d.get_or_add("c", lambda: 3)  # Factory function
-            3
+            >>> d.get_or_add("b", lambda k: len(k) * 10)  # Key doesn't exist, factory called
+            10
             >>> d
-            {'a': 1, 'b': 2, 'c': 3}
+            {'a': 1, 'b': 10}
+            >>> # Pass constructors directly without lambda
+            >>> class Item:
+            ...     def __init__(self, name: str):
+            ...         self.name = name
+            >>> items = QDict[str, Item]()
+            >>> item = items.get_or_add("key1", Item)  # No lambda needed!
+            >>> item.name
+            'key1'
         """
-        # For callable factories, we need to check if key exists first to avoid calling unnecessarily
-        if callable(default):
-            if key in self:
-                return self[key]
-            value = cast(Callable[[], TItem], default)()
-            self[key] = value
-            return value
-        # For direct values, use optimized setdefault (single lookup)
-        return self.setdefault(key, cast(TItem, default))
+        if key in self:
+            return self[key]
+        value = factory(key)
+        self[key] = value
+        return value
 
     @overload
     def get_value_or_default(self, key: TKey, default: TItem) -> TItem: ...

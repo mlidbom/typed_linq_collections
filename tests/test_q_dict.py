@@ -56,23 +56,23 @@ def test_q_dict_discard_silent_on_missing() -> None:
 
 def test_q_dict_get_or_add_existing_key() -> None:
     test_dict: QDict[str, int] = QDict({"a": 1, "b": 2})
-    result = test_dict.get_or_add("a", 99)
+    result = test_dict.get_or_add("a", lambda k: 99)
     assert result == 1  # Returns existing value
     assert test_dict == {"a": 1, "b": 2}  # Dict unchanged
 
 
 def test_q_dict_get_or_add_new_key() -> None:
     test_dict: QDict[str, int] = QDict({"a": 1})
-    result = test_dict.get_or_add("b", 2)
+    result = test_dict.get_or_add("b", lambda k: 2)
     assert result == 2  # Returns new value
     assert test_dict == {"a": 1, "b": 2}  # Key added to dict
 
 
 def test_q_dict_get_or_add_multiple() -> None:
     test_dict: QDict[str, int] = QDict()
-    val1 = test_dict.get_or_add("x", 10)
-    val2 = test_dict.get_or_add("y", 20)
-    val3 = test_dict.get_or_add("x", 99)  # Already exists
+    val1 = test_dict.get_or_add("x", lambda k: 10)
+    val2 = test_dict.get_or_add("y", lambda k: 20)
+    val3 = test_dict.get_or_add("x", lambda k: 99)  # Already exists
     assert val1 == 10
     assert val2 == 20
     assert val3 == 10  # Returns original value, not 99
@@ -99,7 +99,7 @@ def test_q_dict_qvalues_empty() -> None:
 
 def test_q_dict_get_or_add_with_factory() -> None:
     test_dict: QDict[str, int] = QDict({"a": 1})
-    result = test_dict.get_or_add("b", lambda: 2)
+    result = test_dict.get_or_add("b", lambda k: 2)
     assert result == 2
     assert test_dict == {"a": 1, "b": 2}
 
@@ -108,7 +108,7 @@ def test_q_dict_get_or_add_factory_not_called_when_key_exists() -> None:
     test_dict: QDict[str, int] = QDict({"a": 1})
     call_count = 0
 
-    def factory() -> int:
+    def factory(key: str) -> int:
         nonlocal call_count
         call_count += 1
         return 99
@@ -123,7 +123,7 @@ def test_q_dict_get_or_add_factory_called_when_key_missing() -> None:
     test_dict: QDict[str, int] = QDict({"a": 1})
     call_count = 0
 
-    def factory() -> int:
+    def factory(key: str) -> int:
         nonlocal call_count
         call_count += 1
         return 42
