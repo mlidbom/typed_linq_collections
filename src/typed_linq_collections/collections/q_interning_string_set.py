@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Self, override
 from typed_linq_collections.collections.q_set import QSet
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable
+    from collections.abc import Callable, Iterable
 
 
 class QInterningStringSet(QSet[str]):
@@ -31,10 +31,10 @@ class QInterningStringSet(QSet[str]):
         >>> qset.add("python")
         >>> # "python" is automatically interned before storage
     """
-    __slots__: tuple[str, ...] = ()
+    __slots__: tuple[str, ...] = ("_intern_func",)
 
     @override
-    def __init__(self, iterable: Iterable[str] = ()) -> None:
+    def __init__(self, iterable: Iterable[str] = (), *, intern_func: Callable[[str], str] | None = None) -> None:
         """Initializes a new QInterningStringSet with interned strings from the given iterable.
 
         All strings in the input iterable are automatically interned before being added
@@ -44,11 +44,14 @@ class QInterningStringSet(QSet[str]):
             iterable: An iterable of strings to initialize the set with.
                      All strings will be interned automatically.
                      Defaults to an empty sequence.
+            intern_func: A custom function to use for interning strings. If None, uses sys.intern.
+                        Defaults to None.
         """
+        import sys
+        self._intern_func: Callable[[str], str] = intern_func if intern_func is not None else sys.intern
         super().__init__(self._intern_iterable(iterable))
 
-    @staticmethod
-    def _intern_iterable(iterable: Iterable[str]) -> Iterable[str]:
+    def _intern_iterable(self, iterable: Iterable[str]) -> Iterable[str]:
         """Interns all strings in the given iterable.
 
         Args:
@@ -57,8 +60,18 @@ class QInterningStringSet(QSet[str]):
         Returns:
             An iterable of interned strings.
         """
-        import sys
-        return (sys.intern(s) for s in iterable)
+        return (self._intern_func(s) for s in iterable)
+
+    @override
+    def copy(self) -> Self:
+        """Creates a shallow copy of the set, preserving the intern function.
+
+        Returns:
+            A new QInterningStringSet with the same elements and intern function.
+        """
+        result = type(self)(intern_func=self._intern_func)
+        result.update(super().copy())
+        return result
 
     @override
     def add(self, element: str) -> None:  # pyright: ignore[reportIncompatibleMethodOverride]
@@ -67,8 +80,7 @@ class QInterningStringSet(QSet[str]):
         Args:
             element: The string to intern and add to the set.
         """
-        import sys
-        super().add(sys.intern(element))
+        super().add(self._intern_func(element))
 
     @override
     def update(self, *others: Iterable[str]) -> None:  # pyright: ignore[reportIncompatibleMethodOverride]
@@ -92,6 +104,48 @@ class QInterningStringSet(QSet[str]):
         """
         result = self.copy()
         result.update(*others)
+        return result
+
+    @override
+    def intersection(self, *others: Iterable[str]) -> Self:  # pyright: ignore[reportIncompatibleMethodOverride]
+        """Returns a new set with strings common to this set and all others.
+
+        Args:
+            *others: One or more iterables of strings to intersect with.
+
+        Returns:
+            A new QInterningStringSet containing the intersection of all sets.
+        """
+        result = self.copy()
+        result.intersection_update(*others)
+        return result
+
+    @override
+    def difference(self, *others: Iterable[str]) -> Self:  # pyright: ignore[reportIncompatibleMethodOverride]
+        """Returns a new set with strings in this set but not in others.
+
+        Args:
+            *others: One or more iterables of strings to exclude.
+
+        Returns:
+            A new QInterningStringSet containing the difference.
+        """
+        result = self.copy()
+        result.difference_update(*others)
+        return result
+
+    @override
+    def symmetric_difference(self, other: Iterable[str]) -> Self:  # pyright: ignore[reportIncompatibleMethodOverride]
+        """Returns a new set with strings in either set but not both.
+
+        Args:
+            other: An iterable of strings to perform symmetric difference with.
+
+        Returns:
+            A new QInterningStringSet containing the symmetric difference.
+        """
+        result = self.copy()
+        result.symmetric_difference_update(other)
         return result
 
     @override
