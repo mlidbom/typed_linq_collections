@@ -109,7 +109,7 @@ def test_q_key_interning_dict_contains() -> None:
     assert "goodbye" not in test_dict
 
     # Test with non-string key (should not crash)
-    assert 123 not in test_dict  # type: ignore[comparison-overlap]
+    assert 123 not in test_dict
 
 
 def test_q_key_interning_dict_get() -> None:
