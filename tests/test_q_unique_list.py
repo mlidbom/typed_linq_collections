@@ -17,6 +17,26 @@ def test_with_iterable() -> None:
     assert set(ul) == {1, 2, 3}
 
 
+def test_constructor_with_many_duplicates() -> None:
+    # Test constructor optimization with lots of duplicates
+    ul = QUniqueList([1, 1, 1, 2, 2, 2, 3, 3, 3])
+    assert len(ul) == 3
+    assert set(ul) == {1, 2, 3}
+
+
+def test_constructor_maintains_hash_order() -> None:
+    # Verify that constructor sorts by hash
+    ul = QUniqueList([3, 1, 4, 1, 5, 9, 2, 6])
+    hashes = [hash(item) for item in ul]
+    assert hashes == sorted(hashes)
+
+
+def test_constructor_empty_iterable() -> None:
+    ul = QUniqueList[object]([])
+    assert len(ul) == 0
+    assert list(ul) == []
+
+
 def test_add() -> None:
     ul = QUniqueList[int]()
     ul.add(1)
@@ -72,6 +92,47 @@ def test_remove_where_none_match() -> None:
     assert set(ul) == {1, 2, 3}
 
 
+def test_update_single_iterable() -> None:
+    ul = QUniqueList([1, 2, 3])
+    ul.update([3, 4, 5])
+    assert set(ul) == {1, 2, 3, 4, 5}
+    assert len(ul) == 5
+
+
+def test_update_multiple_iterables() -> None:
+    ul = QUniqueList([1, 2, 3])
+    ul.update([3, 4, 5], [5, 6, 7])
+    assert set(ul) == {1, 2, 3, 4, 5, 6, 7}
+    assert len(ul) == 7
+
+
+def test_update_with_duplicates() -> None:
+    ul = QUniqueList([1, 2])
+    ul.update([2, 2, 3, 3, 4])
+    assert set(ul) == {1, 2, 3, 4}
+    assert len(ul) == 4
+
+
+def test_update_empty() -> None:
+    ul = QUniqueList([1, 2, 3])
+    ul.update()
+    assert set(ul) == {1, 2, 3}  # No change
+
+
+def test_update_on_empty_list() -> None:
+    ul = QUniqueList[int]()
+    ul.update([1, 2, 3])
+    assert set(ul) == {1, 2, 3}
+
+
+def test_update_maintains_hash_order() -> None:
+    ul = QUniqueList([1, 2, 3])
+    ul.update([4, 5, 6])
+    # Verify items are still sorted by hash
+    hashes = [hash(item) for item in ul]
+    assert hashes == sorted(hashes)
+
+
 def test_clear() -> None:
     ul = QUniqueList([1, 2, 3])
     ul.clear()
@@ -124,6 +185,28 @@ def test_union_multiple() -> None:
     assert set(result) == {1, 2, 3, 4}
 
 
+def test_union_with_duplicates() -> None:
+    ul1 = QUniqueList([1, 2, 3])
+    ul2 = [2, 2, 3, 3, 4, 4]
+    result = ul1.union(ul2)
+    assert set(result) == {1, 2, 3, 4}
+
+
+def test_union_maintains_hash_order() -> None:
+    ul1 = QUniqueList([1, 2, 3])
+    ul2 = QUniqueList([4, 5, 6])
+    result = ul1.union(ul2)
+    hashes = [hash(item) for item in result]
+    assert hashes == sorted(hashes)
+
+
+def test_union_empty() -> None:
+    ul1 = QUniqueList([1, 2, 3])
+    result = ul1.union()
+    assert set(result) == {1, 2, 3}
+    assert result is not ul1  # Should be a new instance
+
+
 def test_intersection() -> None:
     ul1 = QUniqueList([1, 2, 3, 4])
     ul2 = QUniqueList([3, 4, 5])
@@ -159,6 +242,28 @@ def test_symmetric_difference() -> None:
     ul2 = QUniqueList([3, 4, 5])
     result = ul1.symmetric_difference(ul2)
     assert set(result) == {1, 2, 4, 5}
+
+
+def test_symmetric_difference_maintains_hash_order() -> None:
+    ul1 = QUniqueList([1, 2, 3])
+    ul2 = QUniqueList([3, 4, 5])
+    result = ul1.symmetric_difference(ul2)
+    hashes = [hash(item) for item in result]
+    assert hashes == sorted(hashes)
+
+
+def test_symmetric_difference_no_overlap() -> None:
+    ul1 = QUniqueList([1, 2, 3])
+    ul2 = QUniqueList([4, 5, 6])
+    result = ul1.symmetric_difference(ul2)
+    assert set(result) == {1, 2, 3, 4, 5, 6}
+
+
+def test_symmetric_difference_complete_overlap() -> None:
+    ul1 = QUniqueList([1, 2, 3])
+    ul2 = QUniqueList([1, 2, 3])
+    result = ul1.symmetric_difference(ul2)
+    assert len(result) == 0
 
 
 def test_issubset() -> None:
@@ -244,8 +349,8 @@ def test_with_strings() -> None:
 def test_with_custom_objects() -> None:
     class Person:
         def __init__(self, name: str, age: int) -> None:
-            self.name:str = name
-            self.age:int = age
+            self.name: str = name
+            self.age: int = age
 
         @override
         def __eq__(self, other: object) -> bool:

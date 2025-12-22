@@ -206,6 +206,27 @@ class QUniqueList[TItem](QIterable[TItem]):
             self.discard(item)
         return len(to_remove)
 
+    def update(self, *others: Iterable[TItem]) -> None:
+        """Update the collection, adding elements from all others.
+
+        This is an in-place operation that adds all unique elements from the
+        provided iterables to this collection. This method provides consistency
+        with set.update() behavior.
+
+        Args:
+            *others: One or more iterables whose elements will be added.
+
+        Examples:
+            >>> ul = QUniqueList([1, 2, 3])
+            >>> ul.update([3, 4, 5], [5, 6, 7])
+            >>> sorted(ul)
+            [1, 2, 3, 4, 5, 6, 7]
+        """
+        if not others:
+            return
+        # Combine current items with all others, deduplicate and sort
+        self._items = sorted(set(chain(self._items, *others)), key=hash)
+
     def clear(self) -> None:
         """Remove all items from the collection.
 
@@ -359,7 +380,7 @@ class QUniqueList[TItem](QIterable[TItem]):
         """
         # Combine all iterables and deduplicate in one operation
         result: Self = type(self).__new__(type(self))
-        result._items = sorted(dict.fromkeys(chain(self._items, *others)), key=hash)
+        result._items = sorted(set(chain(self._items, *others)), key=hash)
         return result
 
     def intersection(self, *others: Iterable[TItem]) -> Self:
