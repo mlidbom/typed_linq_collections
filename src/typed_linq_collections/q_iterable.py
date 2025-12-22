@@ -27,13 +27,13 @@ if TYPE_CHECKING:
     from typed_linq_collections.collections.numeric.q_float_types import QFloatIterable
     from typed_linq_collections.collections.numeric.q_fraction_types import QFractionIterable
     from typed_linq_collections.collections.numeric.q_int_types import QIntIterable
+    from typed_linq_collections.collections.q_compact_set import QCompactSet
     from typed_linq_collections.collections.q_dict import QDict
     from typed_linq_collections.collections.q_frozen_set import QFrozenSet
     from typed_linq_collections.collections.q_key_value_pair import KeyValuePair
     from typed_linq_collections.collections.q_list import QList
     from typed_linq_collections.collections.q_sequence import QSequence
     from typed_linq_collections.collections.q_set import QSet
-    from typed_linq_collections.collections.q_unique_list import QUniqueList
     from typed_linq_collections.q_cast import QCast
     from typed_linq_collections.q_grouping import QGrouping
     from typed_linq_collections.q_ordered_iterable import QOrderedIterable
@@ -2156,34 +2156,35 @@ class QIterable[T](Iterable[T], ABC):
         """
         return C.set(self)
 
-    def to_unique_list(self) -> QUniqueList[T]:
-        """Converts this iterable to a QUniqueList containing all unique elements.
+    def to_compact_set(self) -> QCompactSet[T]:
+        """Converts this iterable to a QCompactSet containing all unique elements.
 
-        This method creates a new QUniqueList instance containing all distinct elements
+        This method creates a new QCompactSet instance containing all distinct elements
         from this iterable. Duplicate elements are automatically removed.
-        QUniqueList is a memory-efficient alternative to set that stores unique elements
-        in a sorted list (by hash), providing O(log n) lookups with minimal memory overhead.
+        QCompactSet is an immutable, memory-efficient alternative to set/frozenset that
+        stores unique elements in a sorted list (by hash), providing O(log n) lookups
+        with ~75% less memory overhead than hash-based sets.
 
-        Use this when memory is constrained and you can accept O(n) insertions.
-        Use to_set() when you need O(1) insertions/deletions.
+        Use this when memory is constrained and you can accept O(log n) lookups.
+        Use to_set() when you need O(1) lookups and memory is not a concern.
 
         Returns:
-            A new QUniqueList[T] containing all unique elements from this iterable,
+            A new QCompactSet[T] containing all unique elements from this iterable,
             providing all the query operators from QIterable.
 
         Examples:
-            >>> query([1, 2, 2, 3, 3]).to_unique_list()
-            QUniqueList([1, 2, 3])
-            >>> query(["apple", "banana", "apple"]).to_unique_list()
-            QUniqueList(['apple', 'banana'])
-            >>> query([]).to_unique_list()
-            QUniqueList([])
-            >>> # Memory-efficient uniqueness
-            >>> query([1, 1, 1, 1]).to_unique_list()
-            QUniqueList([1])
+            >>> query([1, 2, 2, 3, 3]).to_compact_set()
+            QCompactSet([1, 2, 3])
+            >>> query(["apple", "banana", "apple"]).to_compact_set()
+            QCompactSet(['apple', 'banana'])
+            >>> query([]).to_compact_set()
+            QCompactSet([])
+            >>> # Memory-efficient uniqueness - ~75% less memory than set
+            >>> query([1, 1, 1, 1]).to_compact_set()
+            QCompactSet([1])
         """
-        from typed_linq_collections.collections.q_unique_list import QUniqueList
-        return QUniqueList(self)
+        from typed_linq_collections.collections.q_compact_set import QCompactSet
+        return QCompactSet(self)
 
     def to_frozenset(self) -> QFrozenSet[T]:
         """Converts this iterable to a QFrozenSet containing all unique elements.
