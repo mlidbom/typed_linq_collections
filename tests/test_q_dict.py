@@ -132,3 +132,38 @@ def test_q_dict_get_or_add_factory_called_when_key_missing() -> None:
     assert result == 42
     assert call_count == 1  # Factory called exactly once
     assert test_dict == {"a": 1, "b": 42}
+
+def test_q_dict_get_value_or_default_existing_key() -> None:
+    test_dict: QDict[str, int] = QDict({"a": 1, "b": 2})
+    result = test_dict.get_value_or_default("a", 99)
+    assert result == 1
+    assert test_dict == {"a": 1, "b": 2}  # Dict unchanged
+
+
+def test_q_dict_get_value_or_default_missing_key() -> None:
+    test_dict: QDict[str, int] = QDict({"a": 1})
+    result = test_dict.get_value_or_default("b", 2)
+    assert result == 2
+    assert test_dict == {"a": 1}  # Dict unchanged, key not added
+
+
+def test_q_dict_get_value_or_default_with_factory() -> None:
+    test_dict: QDict[str, int] = QDict({"a": 1})
+    result = test_dict.get_value_or_default("b", lambda: 42)
+    assert result == 42
+    assert test_dict == {"a": 1}  # Dict unchanged
+
+
+def test_q_dict_get_value_or_default_factory_not_called_when_key_exists() -> None:
+    test_dict: QDict[str, int] = QDict({"a": 1})
+    call_count = 0
+
+    def factory() -> int:
+        nonlocal call_count
+        call_count += 1
+        return 99
+
+    result = test_dict.get_value_or_default("a", factory)
+    assert result == 1
+    assert call_count == 0  # Factory never called
+    assert test_dict == {"a": 1}

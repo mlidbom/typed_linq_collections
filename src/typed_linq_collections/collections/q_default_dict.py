@@ -145,11 +145,50 @@ class QDefaultDict[TKey, TItem](defaultdict[TKey, TItem], QIterable[TKey]):
         if callable(default):
             if key in self:
                 return self[key]
-            value = cast(TItem, default())
+            value = cast(Callable[[], TItem], default)()
             self[key] = value
             return value
         # For direct values, use optimized setdefault (single lookup)
         return self.setdefault(key, cast(TItem, default))
+
+    @overload
+    def get_value_or_default(self, key: TKey, default: TItem) -> TItem: ...
+    @overload
+    def get_value_or_default(self, key: TKey, default: Callable[[], TItem]) -> TItem: ...
+
+    def get_value_or_default(self, key: TKey, default: TItem | Callable[[], TItem]) -> TItem:
+        """Get the value for a key, or return a default without modifying the dictionary.
+
+        Unlike get_or_add, this method does not add the key to the dictionary.
+        Note: For QDefaultDict, this won't trigger the default_factory.
+
+        Args:
+            key: The key to look up.
+            default: Either a value to return if the key doesn't exist,
+                    or a callable that returns the value when invoked.
+
+        Returns:
+            The existing value if the key exists, or the default/factory result.
+
+        Examples:
+            >>> d = QDefaultDict(int)
+            >>> d["a"] = 1
+            >>> d.get_value_or_default("a", 99)  # Key exists
+            1
+            >>> d.get_value_or_default("b", 2)   # Key doesn't exist
+            2
+            >>> "b" in d  # Dictionary unchanged
+            False
+            >>> d.get_value_or_default("c", lambda: 3)  # Factory function
+            3
+        """
+        # For callable factories, check if key exists first to avoid calling unnecessarily
+        if callable(default):
+            if key in self:
+                return self[key]
+            return cast(Callable[[], TItem], default)()
+        # For direct values, use optimized get (single lookup)
+        return self.get(key, cast(TItem, default))
 
     @override
     def _optimized_length(self) -> int: return len(self)
