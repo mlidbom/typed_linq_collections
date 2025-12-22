@@ -17,7 +17,7 @@ def test_to_unique_list_with_duplicates() -> None:
 
 
 def test_to_unique_list_empty() -> None:
-    result: QUniqueList[int] = query([int()]).where(lambda x: False).to_unique_list()
+    result: QUniqueList[int] = query([0]).where(lambda x: False).to_unique_list()
     assert len(result) == 0
 
 
