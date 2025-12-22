@@ -54,6 +54,22 @@ class QDict[TKey, TItem](dict[TKey, TItem], QIterable[TKey]):
         """
         return C.lazy_iterable(lambda: self.items()).select(KeyValuePair)
 
+    def qvalues(self) -> QIterable[TItem]:
+        """Returns a QIterable of values for LINQ operations.
+
+        This method provides access to dictionary values through a QIterable,
+        enabling LINQ-style query operations on the values.
+
+        Returns:
+            A QIterable of the dictionary values.
+
+        Examples:
+            >>> d = QDict({"a": 1, "b": 2, "c": 3})
+            >>> d.qvalues().where(lambda x: x > 1).to_list()
+            [2, 3]
+        """
+        return C.lazy_iterable(lambda: self.values())
+
     def remove(self, key: TKey) -> None:
         """Remove a key from the dictionary.
 

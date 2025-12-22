@@ -95,3 +95,28 @@ def test_q_default_dict_get_or_add_multiple() -> None:
     assert val2 == 20
     assert val3 == 10  # Returns original value, not 99
     assert test_dict == {"x": 10, "y": 20}
+
+
+def test_q_default_dict_qvalues() -> None:
+    test_dict: QDefaultDict[str, int] = QDefaultDict(int)
+    test_dict["a"] = 1
+    test_dict["b"] = 2
+    test_dict["c"] = 3
+    values = test_dict.qvalues()
+    assert values.to_list() == [1, 2, 3]
+
+
+def test_q_default_dict_qvalues_with_where() -> None:
+    test_dict: QDefaultDict[str, int] = QDefaultDict(int)
+    test_dict["a"] = 1
+    test_dict["b"] = 2
+    test_dict["c"] = 3
+    test_dict["d"] = 4
+    result = test_dict.qvalues().where(lambda x: x > 2).to_list()
+    assert result == [3, 4]
+
+
+def test_q_default_dict_qvalues_empty() -> None:
+    test_dict: QDefaultDict[str, int] = QDefaultDict(int)
+    values = test_dict.qvalues()
+    assert values.to_list() == []
