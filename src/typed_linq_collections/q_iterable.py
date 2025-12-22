@@ -22,7 +22,7 @@ if TYPE_CHECKING:
     from _typeshed import SupportsRichComparison
 
     # noinspection PyProtectedMember
-    from typed_linq_collections._private_implementation_details.type_aliases import Action1, Func, Predicate, Selector
+    from typed_linq_collections._private_implementation_details.type_aliases import Func, Predicate, Selector
     from typed_linq_collections.collections.numeric.q_decimal_types import QDecimalIterable
     from typed_linq_collections.collections.numeric.q_float_types import QFloatIterable
     from typed_linq_collections.collections.numeric.q_fraction_types import QFractionIterable
@@ -383,14 +383,15 @@ class QIterable[T](Iterable[T], ABC):
         """
         return ops.pipe(self, action)
 
-    def for_each(self, action: Action1[T]) -> Self:
+    def for_each(self, action: Callable[[T], object]) -> Self:
         """Executes the specified action on each element in the iterable.
 
         This method iterates through all elements and performs the given action for side effects,
-        then returns self to allow method chaining.
+        then returns self to allow method chaining. The return value of the action is ignored.
 
         Args:
-            action: A function to execute on each element. The function takes an element and returns nothing.
+            action: A function to execute on each element. The function takes an element and
+                   may return any value (which will be ignored).
 
         Returns:
             This same QIterable instance to allow method chaining.
@@ -401,6 +402,13 @@ class QIterable[T](Iterable[T], ABC):
             [1, 2, 3]  # Original elements returned
             >>> results
             [2, 4, 6]  # Side effects occurred
+
+            >>> # Works with functions that return values
+            >>> query([1, 2, 3]).for_each(print).to_list()
+            1
+            2
+            3
+            [1, 2, 3]
         """
         for item in self: action(item)
         return self
