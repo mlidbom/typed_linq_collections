@@ -19,8 +19,6 @@ class QKeyInterningDict[TValue](QDict[str, TValue]):
 
     Examples:
         >>> qdict = QKeyInterningDict([("name", "Alice"), ("city", "NYC")])
-        >>> # All stored keys are interned
-        >>> "name" in qdict  # Uses interned comparison
         True
         >>> qdict["country"] = "USA"
         >>> # "country" is automatically interned before storage
