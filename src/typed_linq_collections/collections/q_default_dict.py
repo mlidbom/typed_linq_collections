@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections import defaultdict
 from collections.abc import Callable
-from typing import TYPE_CHECKING, Self, cast, overload, override
+from typing import TYPE_CHECKING, Self, cast, override
 
 # noinspection PyPep8Naming,PyProtectedMember
 from typed_linq_collections._private_implementation_details.q_zero_overhead_collection_contructors import ZeroImportOverheadConstructors as C
@@ -140,44 +140,34 @@ class QDefaultDict[TKey, TItem](defaultdict[TKey, TItem], QIterable[TKey]):
         self[key] = value
         return value
 
-    @overload
-    def get_value_or_default(self, key: TKey, default: TItem) -> TItem: ...
-    @overload
-    def get_value_or_default(self, key: TKey, default: Callable[[], TItem]) -> TItem: ...
-
-    def get_value_or_default(self, key: TKey, default: TItem | Callable[[], TItem]) -> TItem:
-        """Get the value for a key, or return a default without modifying the dictionary.
+    def get_value_or_default(self, key: TKey, factory: Callable[[TKey], TItem]) -> TItem:
+        """Get the value for a key, or return a factory-created value without modifying the dictionary.
 
         Unlike get_or_add, this method does not add the key to the dictionary.
         Note: For QDefaultDict, this won't trigger the default_factory.
+        The factory function receives the key as an argument.
 
         Args:
             key: The key to look up.
-            default: Either a value to return if the key doesn't exist,
-                    or a callable that returns the value when invoked.
+            factory: A callable that takes the key and returns the value if the key doesn't exist.
+                    Only called if the key is not present.
 
         Returns:
-            The existing value if the key exists, or the default/factory result.
+            The existing value if the key exists, or the factory result.
 
         Examples:
             >>> d = QDefaultDict(int)
             >>> d["a"] = 1
-            >>> d.get_value_or_default("a", 99)  # Key exists
+            >>> d.get_value_or_default("a", lambda k: 99)  # Key exists, factory not called
             1
-            >>> d.get_value_or_default("b", 2)   # Key doesn't exist
+            >>> d.get_value_or_default("b", lambda k: 2)   # Key doesn't exist, factory called
             2
             >>> "b" in d  # Dictionary unchanged
             False
-            >>> d.get_value_or_default("c", lambda: 3)  # Factory function
-            3
         """
-        # For callable factories, check if key exists first to avoid calling unnecessarily
-        if callable(default):
-            if key in self:
-                return self[key]
-            return cast(Callable[[], TItem], default)()
-        # For direct values, use optimized get (single lookup)
-        return self.get(key, cast(TItem, default))
+        if key in self:
+            return self[key]
+        return factory(key)
 
     def remove_where(self, predicate: Callable[[KeyValuePair[TKey, TItem]], bool]) -> int:
         """Remove all key-value pairs matching the predicate.
