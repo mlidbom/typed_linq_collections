@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import sys
 
-from typed_linq_collections.collections.q_key_interning_dict import QKeyInterningDict
+from typed_linq_collections.collections.string_interning.q_key_interning_dict import QKeyInterningDict
 
 
 def test_q_key_interning_dict_empty_constructor() -> None:

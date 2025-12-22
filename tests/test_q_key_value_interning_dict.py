@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import sys
 
-from typed_linq_collections.collections.q_key_value_interning_dict import QKeyValueInterningDict
+from typed_linq_collections.collections.string_interning.q_key_value_interning_dict import QKeyValueInterningDict
 
 
 def test_q_key_value_interning_dict_empty_constructor() -> None:
@@ -28,7 +28,7 @@ def test_q_key_value_interning_dict_interns_keys_on_init() -> None:
     test_dict: QKeyValueInterningDict = QKeyValueInterningDict([(k, "value") for k in original_keys])
 
     # Verify that the keys in the dict are the same objects as interned strings
-    for key in test_dict.keys():
+    for key in test_dict:
         assert key is sys.intern(key), f"Key '{key}' should be interned"
 
 
@@ -126,7 +126,7 @@ def test_q_key_value_interning_dict_fromkeys_interns_keys_and_value() -> None:
 
     test_dict = QKeyValueInterningDict.fromkeys(non_interned_keys, non_interned_value)
 
-    for key in test_dict.keys():
+    for key in test_dict:
         assert key is sys.intern(key), f"Key '{key}' should be interned"
         assert test_dict[key] is sys.intern(non_interned_value), "Value should be interned"
 
@@ -149,7 +149,7 @@ def test_q_key_value_interning_dict_copy_preserves_interning() -> None:
 
 def test_q_key_value_interning_dict_custom_intern_func() -> None:
     """Test that a custom intern function is used for both keys and values."""
-    def custom_intern(s): return s.upper()
+    def custom_intern(s: str) -> str: return s.upper()
 
     test_dict = QKeyValueInterningDict([("key", "value")], intern_func=custom_intern)
     test_dict["hello"] = "world"
@@ -162,7 +162,7 @@ def test_q_key_value_interning_dict_custom_intern_func() -> None:
 
 def test_q_key_value_interning_dict_custom_intern_func_preserved_in_copy() -> None:
     """Test that copy preserves the custom intern function."""
-    def custom_intern(s): return s.upper()
+    def custom_intern(s: str) -> str: return s.upper()
 
     original = QKeyValueInterningDict([("key", "value")], intern_func=custom_intern)
     copied = original.copy()
@@ -174,7 +174,7 @@ def test_q_key_value_interning_dict_custom_intern_func_preserved_in_copy() -> No
 
 def test_q_key_value_interning_dict_custom_intern_func_in_fromkeys() -> None:
     """Test that fromkeys uses the custom intern function."""
-    def custom_intern(s): return s.upper()
+    def custom_intern(s: str) -> str: return s.upper()
 
     test_dict = QKeyValueInterningDict.fromkeys(["a", "b", "c"], "value", intern_func=custom_intern)
 

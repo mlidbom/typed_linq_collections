@@ -1,8 +1,12 @@
 from __future__ import annotations
 
 import sys
+from typing import TYPE_CHECKING
 
-from typed_linq_collections.collections.q_interning_list import QInterningList
+from typed_linq_collections.collections.string_interning.q_interning_list import QInterningList
+
+if TYPE_CHECKING:
+    from collections.abc import Generator
 
 
 def test_q_interning_list_empty_constructor() -> None:
@@ -46,7 +50,7 @@ def test_q_interning_list_modifies_source_list_in_place() -> None:
     original_str1 = source_list[0]
     original_str2 = source_list[1]
 
-    test_list = QInterningList(source_list)
+    QInterningList(source_list)
 
     # Verify source list was modified in-place
     assert source_list[0] is not original_str1, "Source list should be modified"
@@ -183,7 +187,7 @@ def test_q_interning_list_rmul_preserves_interning() -> None:
 
 def test_q_interning_list_custom_intern_func() -> None:
     """Test that a custom intern function is used."""
-    def custom_intern(s): return s.upper()
+    def custom_intern(s: str) -> str: return s.upper()
 
     test_list = QInterningList(["hello", "world"], intern_func=custom_intern)
 
@@ -193,7 +197,7 @@ def test_q_interning_list_custom_intern_func() -> None:
 
 def test_q_interning_list_custom_intern_func_preserved_in_copy() -> None:
     """Test that copy preserves the custom intern function."""
-    def custom_intern(s): return s.upper()
+    def custom_intern(s: str) -> str: return s.upper()
 
     original = QInterningList(["hello"], intern_func=custom_intern)
     copied = original.copy()
@@ -204,10 +208,10 @@ def test_q_interning_list_custom_intern_func_preserved_in_copy() -> None:
 
 def test_q_interning_list_custom_intern_func_modifies_source_list() -> None:
     """Test that custom intern function is used when modifying source list."""
-    def custom_intern(s): return s.upper()
+    def custom_intern(s: str) -> str: return s.upper()
 
     source_list = ["hello", "world"]
-    test_list = QInterningList(source_list, intern_func=custom_intern)
+    QInterningList(source_list, intern_func=custom_intern)
 
     # Verify source list was modified with custom intern function
     assert source_list[0] == "HELLO"
@@ -216,7 +220,7 @@ def test_q_interning_list_custom_intern_func_modifies_source_list() -> None:
 
 def test_q_interning_list_from_generator() -> None:
     """Test creating QInterningList from a generator."""
-    def string_generator():
+    def string_generator() -> Generator[str]:
         yield "a"
         yield "b"
         yield "c"

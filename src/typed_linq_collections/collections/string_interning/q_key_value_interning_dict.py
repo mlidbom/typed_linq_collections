@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Self, TypeVar, overload, override
 
-from typed_linq_collections.collections.q_key_interning_dict import QKeyInterningDict
+from typed_linq_collections.collections.string_interning.q_key_interning_dict import QKeyInterningDict
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Iterable
@@ -117,12 +117,13 @@ class QKeyValueInterningDict(QKeyInterningDict[str]):
         return result
 
     @classmethod
+    @classmethod
     @overload
-    def fromkeys(cls, keys: Iterable[str]) -> QKeyValueInterningDict: ...
+    def fromkeys(cls, keys: Iterable[str], value: None = None, *, intern_func: Callable[[str], str] | None = None) -> QKeyValueInterningDict: ...
 
     @classmethod
     @overload
-    def fromkeys(cls, keys: Iterable[str], value: str) -> QKeyValueInterningDict: ...
+    def fromkeys(cls, keys: Iterable[str], value: str, *, intern_func: Callable[[str], str] | None = None) -> QKeyValueInterningDict: ...
 
     @classmethod
     @override
