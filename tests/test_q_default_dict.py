@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import pytest
+
 from typed_linq_collections.collections.q_default_dict import QDefaultDict
 
 
@@ -28,3 +30,40 @@ def test_q_default_dict_qcount() -> None:
 
     empty_dict: QDefaultDict[str, int] = QDefaultDict(lambda: 0)
     assert empty_dict.qcount() == 0
+
+
+def test_q_default_dict_remove() -> None:
+    test_dict: QDefaultDict[str, int] = QDefaultDict(int)
+    test_dict["a"] = 1
+    test_dict["b"] = 2
+    test_dict["c"] = 3
+    test_dict.remove("b")
+    assert len(test_dict) == 2
+    assert "b" not in test_dict
+    assert set(test_dict.keys()) == {"a", "c"}
+
+
+def test_q_default_dict_remove_raises_on_missing() -> None:
+    test_dict: QDefaultDict[str, int] = QDefaultDict(int)
+    test_dict["a"] = 1
+    with pytest.raises(KeyError):
+        test_dict.remove("missing")
+
+
+def test_q_default_dict_discard() -> None:
+    test_dict: QDefaultDict[str, int] = QDefaultDict(int)
+    test_dict["a"] = 1
+    test_dict["b"] = 2
+    test_dict["c"] = 3
+    test_dict.discard("b")
+    assert len(test_dict) == 2
+    assert "b" not in test_dict
+    assert set(test_dict.keys()) == {"a", "c"}
+
+
+def test_q_default_dict_discard_silent_on_missing() -> None:
+    test_dict: QDefaultDict[str, int] = QDefaultDict(int)
+    test_dict["a"] = 1
+    test_dict.discard("missing")  # Should not raise
+    assert len(test_dict) == 1
+    assert set(test_dict.keys()) == {"a"}

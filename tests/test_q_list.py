@@ -69,3 +69,23 @@ def test_q_list_index_empty_list() -> None:
 def test_q_list_index_single_element() -> None:
     test_list = QList([5])
     assert test_list.index(5) == 0
+
+
+def test_q_list_discard() -> None:
+    test_list: QList[int] = QList([1, 2, 3, 4])
+    test_list.discard(3)
+    assert len(test_list) == 3
+    assert test_list.to_list() == [1, 2, 4]
+
+
+def test_q_list_discard_removes_first_occurrence() -> None:
+    test_list: QList[int] = QList([1, 2, 3, 2, 4])
+    test_list.discard(2)
+    assert test_list.to_list() == [1, 3, 2, 4]
+
+
+def test_q_list_discard_silent_on_missing() -> None:
+    test_list: QList[int] = QList([1, 2, 3])
+    test_list.discard(999)  # Should not raise
+    assert len(test_list) == 3
+    assert test_list.to_list() == [1, 2, 3]

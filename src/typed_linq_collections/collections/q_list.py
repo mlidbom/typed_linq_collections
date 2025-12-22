@@ -66,6 +66,25 @@ class QList[TItem](list[TItem], QSequence[TItem], QIterable[TItem]):
             return QList(sources[0])
         return QList(chain(*sources))
 
+    def discard(self, value: TItem) -> None:
+        """Remove the first occurrence of a value from the list without raising an error.
+
+        If the value is not found, this method does nothing (silent success).
+        This provides consistency with set.discard() behavior.
+
+        Args:
+            value: The value to remove from the list.
+
+        Examples:
+            >>> lst = QList([1, 2, 3, 2])
+            >>> lst.discard(2)
+            >>> lst
+            [1, 3, 2]
+            >>> lst.discard(999)  # No error
+        """
+        if value in self:
+            self.remove(value)
+
     @override
     def _optimized_length(self) -> int: return len(self)
 

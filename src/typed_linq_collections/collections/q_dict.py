@@ -54,6 +54,44 @@ class QDict[TKey, TItem](dict[TKey, TItem], QIterable[TKey]):
         """
         return C.lazy_iterable(lambda: self.items()).select(KeyValuePair)
 
+    def remove(self, key: TKey) -> None:
+        """Remove a key from the dictionary.
+
+        Unlike pop(), this method doesn't return the removed value, making it
+        consistent with list.remove() and set.remove().
+
+        Args:
+            key: The key to remove from the dictionary.
+
+        Raises:
+            KeyError: If the key is not found in the dictionary.
+
+        Examples:
+            >>> d = QDict({"a": 1, "b": 2})
+            >>> d.remove("a")
+            >>> d
+            {'b': 2}
+        """
+        del self[key]
+
+    def discard(self, key: TKey) -> None:
+        """Remove a key from the dictionary without raising an error.
+
+        If the key is not found, this method does nothing (silent success).
+        This provides consistency with set.discard() behavior.
+
+        Args:
+            key: The key to remove from the dictionary.
+
+        Examples:
+            >>> d = QDict({"a": 1, "b": 2})
+            >>> d.discard("a")
+            >>> d
+            {'b': 2}
+            >>> d.discard("z")  # No error
+        """
+        self.pop(key, None)
+
     @override
     def _optimized_length(self) -> int: return len(self)
 
