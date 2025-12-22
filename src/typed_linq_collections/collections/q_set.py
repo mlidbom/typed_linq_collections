@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from itertools import chain
-from typing import TYPE_CHECKING, Self, override
+from typing import TYPE_CHECKING, Self, cast, override
 
 from typed_linq_collections.q_iterable import QIterable
 
@@ -125,31 +125,31 @@ class QSet[TItem](set[TItem], QIterable[TItem]):
     # Binary operators
     @override
     def __or__(self, other: AbstractSet[TItem]) -> Self:  # pyright: ignore[reportIncompatibleMethodOverride]
-        return type(self)(super().__or__(other))  # type: ignore[arg-type]  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
+        return type(self)(cast(set[TItem], super().__or__(other)))  # pyright: ignore[reportUnknownMemberType]
 
     def __ror__(self, other: AbstractSet[TItem]) -> Self:
-        return type(self)(set.__or__(set(other), self))  # type: ignore[arg-type]  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
+        return type(self)(cast(set[TItem], set.__or__(set(other), self)))  # pyright: ignore[reportUnknownMemberType]
 
     @override
     def __and__(self, other: AbstractSet[TItem]) -> Self:  # pyright: ignore[reportIncompatibleMethodOverride]
-        return type(self)(super().__and__(other))  # type: ignore[arg-type]  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
+        return type(self)(cast(set[TItem], super().__and__(other)))  # pyright: ignore[reportUnknownMemberType]
 
     def __rand__(self, other: AbstractSet[TItem]) -> Self:
-        return type(self)(set.__and__(set(other), self))  # type: ignore[arg-type]  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
+        return type(self)(cast(set[TItem], set.__and__(set(other), self)))  # pyright: ignore[reportUnknownMemberType]
 
     @override
     def __sub__(self, other: AbstractSet[TItem]) -> Self:  # pyright: ignore[reportIncompatibleMethodOverride]
-        return type(self)(super().__sub__(other))  # type: ignore[arg-type]  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
+        return type(self)(cast(set[TItem], super().__sub__(other)))  # pyright: ignore[reportUnknownMemberType]
 
     def __rsub__(self, other: AbstractSet[TItem]) -> Self:
-        return type(self)(set.__sub__(set(other), self))  # type: ignore[arg-type]  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
+        return type(self)(cast(set[TItem], set.__sub__(set(other), self)))  # pyright: ignore[reportUnknownMemberType]
 
     @override
     def __xor__(self, other: AbstractSet[TItem]) -> Self:  # pyright: ignore[reportIncompatibleMethodOverride]
-        return type(self)(super().__xor__(other))  # type: ignore[arg-type]  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
+        return type(self)(cast(set[TItem], super().__xor__(other)))  # pyright: ignore[reportUnknownMemberType]
 
     def __rxor__(self, other: AbstractSet[TItem]) -> Self:
-        return type(self)(set.__xor__(set(other), self))  # type: ignore[arg-type]  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
+        return type(self)(cast(set[TItem], set.__xor__(set(other), self)))  # pyright: ignore[reportUnknownMemberType]
 
     # In-place operators
     @override

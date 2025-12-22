@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import ABC
 from collections.abc import Callable, Iterable
 from itertools import chain
-from typing import TYPE_CHECKING, Never, Self, overload
+from typing import TYPE_CHECKING, Never, Self, cast, overload
 
 # noinspection PyProtectedMember
 from typed_linq_collections._private_implementation_details import ops
@@ -95,7 +95,7 @@ def query_from[TItem](*sources: Iterable[TItem]) -> QIterable[TItem]:
         >>> all_animals: QIterable[Animal] = query_from(dogs, cats)
     """
     if not sources:
-        return C.caching_iterable(())  # type: ignore
+        return cast(QIterable[TItem], C.caching_iterable(()))
     if len(sources) == 1:
         return C.caching_iterable(sources[0])
     return C.caching_iterable(chain(*sources))

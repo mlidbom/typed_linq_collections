@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from collections.abc import Callable
+from collections.abc import Callable, Mapping
 from typing import TYPE_CHECKING, Self, cast, overload, override
 
 # noinspection PyPep8Naming,PyProtectedMember
@@ -9,7 +9,7 @@ from typed_linq_collections.collections.q_key_value_pair import KeyValuePair
 from typed_linq_collections.q_iterable import QIterable
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable, Mapping
+    from collections.abc import Iterable
 
 class QDict[TKey, TItem](dict[TKey, TItem], QIterable[TKey]):
     """A mutable dictionary that extends Python's built-in dict with LINQ-style query operations on keys.
@@ -38,10 +38,10 @@ class QDict[TKey, TItem](dict[TKey, TItem], QIterable[TKey]):
         Examples:
             >>> QDict({"a": 1, "b": 2})
             {'a': 1, 'b': 2}
-            >>> QDict([("a", 1), ("b", 2)])
+            >>> QDict([('a', 1), ('b', 2)])
             {'a': 1, 'b': 2}
         """
-        super().__init__(mappings)  # type: ignore
+        super().__init__(cast(Mapping[TKey, TItem], mappings))
 
     def qitems(self) -> QIterable[KeyValuePair[TKey, TItem]]:
         """Returns a QIterable of KeyValuePair objects for LINQ operations on key-value pairs.
