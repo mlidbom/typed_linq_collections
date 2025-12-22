@@ -44,7 +44,7 @@ class QUniqueList[TItem](QIterable[TItem]):
     - Implements QIterable[TItem] for LINQ-style query operations
     """
 
-    __slots__ = ("_items",)
+    __slots__: tuple[str, ...] = ("_items",)
 
     def __init__(self, iterable: Iterable[TItem] = ()) -> None:
         """Initializes a new QUniqueList with unique elements from the given iterable.
@@ -233,7 +233,7 @@ class QUniqueList[TItem](QIterable[TItem]):
             >>> list(ul2)
             [1, 2, 3, 4]
         """
-        new_list = type(self).__new__(type(self))
+        new_list: Self = type(self).__new__(type(self))
         new_list._items = self._items.copy()
         return new_list
 
@@ -254,7 +254,11 @@ class QUniqueList[TItem](QIterable[TItem]):
             False
         """
         try:
-            _, found = self._find_index(item)  # type: ignore[arg-type]
+            # Try to hash the item first to ensure it's hashable
+            hash(item)
+            # If hashable, search for it (cast is safe since we know it's hashable)
+            from typing import cast as type_cast
+            _, found = self._find_index(type_cast(TItem, item))
             return found
         except TypeError:
             # Item is not hashable, so it can't be in the collection
@@ -273,6 +277,7 @@ class QUniqueList[TItem](QIterable[TItem]):
         """
         return len(self._items)
 
+    @override
     def __iter__(self) -> Iterator[TItem]:
         """Iterate over items in hash-sorted order.
 
@@ -286,6 +291,7 @@ class QUniqueList[TItem](QIterable[TItem]):
         """
         return iter(self._items)
 
+    @override
     def __repr__(self) -> str:
         """Return a string representation of the collection.
 
@@ -298,6 +304,7 @@ class QUniqueList[TItem](QIterable[TItem]):
         """
         return f"QUniqueList({list(self._items)!r})"
 
+    @override
     def __eq__(self, other: object) -> bool:
         """Check equality with another collection.
 
@@ -377,7 +384,7 @@ class QUniqueList[TItem](QIterable[TItem]):
 
         # Convert others to sets for fast lookup
         other_sets = [set(other) for other in others]
-        result = type(self).__new__(type(self))
+        result: Self = type(self).__new__(type(self))
         result._items = []
 
         for item in self._items:
@@ -406,7 +413,7 @@ class QUniqueList[TItem](QIterable[TItem]):
 
         # Combine all others into one set for fast lookup
         other_items = set(chain(*others))
-        result = type(self).__new__(type(self))
+        result: Self = type(self).__new__(type(self))
         result._items = [item for item in self._items if item not in other_items]
 
         return result
@@ -427,7 +434,7 @@ class QUniqueList[TItem](QIterable[TItem]):
             [1, 2, 4, 5]
         """
         other_set = set(other)
-        result = type(self).__new__(type(self))
+        result: Self = type(self).__new__(type(self))
         result._items = []
 
         # Add items from self not in other
@@ -493,7 +500,7 @@ class QUniqueList[TItem](QIterable[TItem]):
 
     # Set operators
 
-    def __or__(self, other: AbstractSet[TItem]) -> Self:
+    def __or__(self, other: AbstractSet[TItem] | QUniqueList[TItem]) -> Self:
         """Return the union using the | operator.
 
         Args:
@@ -510,7 +517,7 @@ class QUniqueList[TItem](QIterable[TItem]):
         """
         return self.union(other)
 
-    def __and__(self, other: AbstractSet[TItem]) -> Self:
+    def __and__(self, other: AbstractSet[TItem] | QUniqueList[TItem]) -> Self:
         """Return the intersection using the & operator.
 
         Args:
@@ -527,7 +534,7 @@ class QUniqueList[TItem](QIterable[TItem]):
         """
         return self.intersection(other)
 
-    def __sub__(self, other: AbstractSet[TItem]) -> Self:
+    def __sub__(self, other: AbstractSet[TItem] | QUniqueList[TItem]) -> Self:
         """Return the difference using the - operator.
 
         Args:
@@ -544,7 +551,7 @@ class QUniqueList[TItem](QIterable[TItem]):
         """
         return self.difference(other)
 
-    def __xor__(self, other: AbstractSet[TItem]) -> Self:
+    def __xor__(self, other: AbstractSet[TItem] | QUniqueList[TItem]) -> Self:
         """Return the symmetric difference using the ^ operator.
 
         Args:
