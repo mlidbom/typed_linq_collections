@@ -44,11 +44,12 @@ class QInterningStringSet(QSet[str]):
             iterable: An iterable of strings to initialize the set with.
                      All strings will be interned automatically.
                      Defaults to an empty sequence.
-            intern_func: A custom function to use for interning strings. If None, uses sys.intern.
+            intern_func: A custom function to use for interning strings. If None, uses the
+                        default interning function (configurable via set_default_intern_func).
                         Defaults to None.
         """
-        import sys
-        self._intern_func: Callable[[str], str] = intern_func if intern_func is not None else sys.intern
+        from typed_linq_collections.collections import string_interning
+        self._intern_func: Callable[[str], str] = intern_func if intern_func is not None else string_interning._default_intern_func
         super().__init__(self._intern_iterable(iterable))
 
     def _intern_iterable(self, iterable: Iterable[str]) -> Iterable[str]:

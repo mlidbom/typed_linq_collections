@@ -36,11 +36,12 @@ class QKeyInterningDict[TValue](QDict[str, TValue]):
             elements: An iterable of (key, value) tuples to initialize the dictionary with.
                      All keys will be interned automatically.
                      Defaults to an empty sequence.
-            intern_func: A custom function to use for interning strings. If None, uses sys.intern.
+            intern_func: A custom function to use for interning strings. If None, uses the
+                        default interning function (configurable via set_default_intern_func).
                         Defaults to None.
         """
-        import sys
-        self._intern_func: Callable[[str], str] = intern_func if intern_func is not None else sys.intern
+        from typed_linq_collections.collections import string_interning
+        self._intern_func: Callable[[str], str] = intern_func if intern_func is not None else string_interning._default_intern_func
         super().__init__(self._intern_keys(elements))
 
     def _intern_keys(self, elements: Iterable[tuple[str, TValue]]) -> Iterable[tuple[str, TValue]]:
@@ -125,14 +126,15 @@ class QKeyInterningDict[TValue](QDict[str, TValue]):
         Args:
             keys: An iterable of string keys to intern.
             value: The value to set for all keys.
-            intern_func: A custom function to use for interning strings. If None, uses sys.intern.
+            intern_func: A custom function to use for interning strings. If None, uses the
+                        default interning function (configurable via set_default_intern_func).
                         Defaults to None.
 
         Returns:
             A new QKeyInterningDict with the given keys.
         """
-        import sys
-        _intern_func = intern_func if intern_func is not None else sys.intern
+        from typed_linq_collections.collections import string_interning
+        _intern_func = intern_func if intern_func is not None else string_interning._default_intern_func
         interned_keys = (_intern_func(key) for key in keys)
         result = QKeyInterningDict[_T | None](intern_func=intern_func)  # pyright: ignore[reportInvalidTypeArguments]
         for key in interned_keys:

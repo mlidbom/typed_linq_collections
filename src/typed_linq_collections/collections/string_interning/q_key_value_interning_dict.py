@@ -41,7 +41,8 @@ class QKeyValueInterningDict(QKeyInterningDict[str]):
             elements: An iterable of (key, value) tuples to initialize the dictionary with.
                      All keys and values will be interned automatically.
                      Defaults to an empty sequence.
-            intern_func: A custom function to use for interning strings. If None, uses sys.intern.
+            intern_func: A custom function to use for interning strings. If None, uses the
+                        default interning function (configurable via set_default_intern_func).
                         Defaults to None.
         """
         # Call parent's __init__ which will call our overridden _intern_keys
@@ -133,14 +134,15 @@ class QKeyValueInterningDict(QKeyInterningDict[str]):
         Args:
             keys: An iterable of string keys to intern.
             value: The string value to intern and set for all keys.
-            intern_func: A custom function to use for interning strings. If None, uses sys.intern.
+            intern_func: A custom function to use for interning strings. If None, uses the
+                        default interning function (configurable via set_default_intern_func).
                         Defaults to None.
 
         Returns:
             A new QKeyValueInterningDict with the given keys.
         """
-        import sys
-        _intern_func = intern_func if intern_func is not None else sys.intern
+        from typed_linq_collections.collections import string_interning
+        _intern_func = intern_func if intern_func is not None else string_interning._default_intern_func
         interned_value = _intern_func(value) if value is not None else None
         interned_keys = (_intern_func(key) for key in keys)
         result = QKeyValueInterningDict(intern_func=intern_func)

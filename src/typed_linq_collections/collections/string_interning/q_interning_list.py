@@ -55,11 +55,12 @@ class QInterningList(QList[str]):
                      All strings will be interned automatically.
                      If this is a list, it will be modified in-place.
                      Defaults to an empty sequence.
-            intern_func: A custom function to use for interning strings. If None, uses sys.intern.
+            intern_func: A custom function to use for interning strings. If None, uses the
+                        default interning function (configurable via set_default_intern_func).
                         Defaults to None.
         """
-        import sys
-        self._intern_func: Callable[[str], str] = intern_func if intern_func is not None else sys.intern
+        from typed_linq_collections.collections import string_interning
+        self._intern_func: Callable[[str], str] = intern_func if intern_func is not None else string_interning._default_intern_func
 
         # If it's a list, intern the values in-place
         if isinstance(iterable, list):
