@@ -49,7 +49,7 @@ class QInterningStringSet(QSet[str]):
                         Defaults to None.
         """
         from typed_linq_collections.collections import string_interning
-        self._intern_func: Callable[[str], str] = intern_func if intern_func is not None else string_interning._default_intern_func
+        self._intern_func: Callable[[str], str] = intern_func if intern_func is not None else string_interning.default_intern_func
         super().__init__(self._intern_iterable(iterable))
 
     def _intern_iterable(self, iterable: Iterable[str]) -> Iterable[str]:

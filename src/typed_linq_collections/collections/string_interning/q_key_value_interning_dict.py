@@ -142,7 +142,7 @@ class QKeyValueInterningDict(QKeyInterningDict[str]):
             A new QKeyValueInterningDict with the given keys.
         """
         from typed_linq_collections.collections import string_interning
-        _intern_func = intern_func if intern_func is not None else string_interning._default_intern_func
+        _intern_func = intern_func if intern_func is not None else string_interning.default_intern_func
         interned_value = _intern_func(value) if value is not None else None
         interned_keys = (_intern_func(key) for key in keys)
         result = QKeyValueInterningDict(intern_func=intern_func)

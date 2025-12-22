@@ -27,7 +27,7 @@ if TYPE_CHECKING:
     from collections.abc import Callable
 
 # The default interning function used by all string interning collections
-_default_intern_func: Callable[[str], str] = sys.intern
+default_intern_func: Callable[[str], str] = sys.intern
 
 
 def set_default_intern_func(func: Callable[[str], str]) -> None:
@@ -54,8 +54,8 @@ def set_default_intern_func(func: Callable[[str], str]) -> None:
         >>> # Reset to default
         >>> set_default_intern_func(sys.intern)
     """
-    global _default_intern_func
-    _default_intern_func = func
+    global default_intern_func
+    default_intern_func = func
 
 
 __all__ = [

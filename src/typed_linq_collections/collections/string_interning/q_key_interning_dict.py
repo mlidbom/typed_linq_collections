@@ -41,7 +41,7 @@ class QKeyInterningDict[TValue](QDict[str, TValue]):
                         Defaults to None.
         """
         from typed_linq_collections.collections import string_interning
-        self._intern_func: Callable[[str], str] = intern_func if intern_func is not None else string_interning._default_intern_func
+        self._intern_func: Callable[[str], str] = intern_func if intern_func is not None else string_interning.default_intern_func
         super().__init__(self._intern_keys(elements))
 
     def _intern_keys(self, elements: Iterable[tuple[str, TValue]]) -> Iterable[tuple[str, TValue]]:
@@ -134,7 +134,7 @@ class QKeyInterningDict[TValue](QDict[str, TValue]):
             A new QKeyInterningDict with the given keys.
         """
         from typed_linq_collections.collections import string_interning
-        _intern_func = intern_func if intern_func is not None else string_interning._default_intern_func
+        _intern_func = intern_func if intern_func is not None else string_interning.default_intern_func
         interned_keys = (_intern_func(key) for key in keys)
         result = QKeyInterningDict[_T | None](intern_func=intern_func)  # pyright: ignore[reportInvalidTypeArguments]
         for key in interned_keys:
