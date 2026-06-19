@@ -11,6 +11,8 @@ Complete LINQ, language integrated query, implementation for Python with full ty
 - **Numeric Specializations**: Dedicated types for `int`, `float`, `Decimal`, and `Fraction` collections
 - **Extensible Design**: QIterable is an abstract class/mixin that can be subclassed by any Iterable type to add full querying capabilities
 
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/mlidbom)
+
 ## Quick Start
 
 ```python
